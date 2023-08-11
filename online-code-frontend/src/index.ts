@@ -10,7 +10,7 @@ import CodeEditorPlugin from "@alilc/lowcode-plugin-code-editor";
 import ManualPlugin from "@alilc/lowcode-plugin-manual";
 import InjectPlugin from '@alilc/lowcode-plugin-inject';
 import SimulatorResizerPlugin from '@alilc/lowcode-plugin-simulator-select';
-import ComponentPanelPlugin from './plugins/plugin-component-panel';
+import ComponentPanelPlugin from '@alilc/lowcode-plugin-components-pane';
 import DefaultSettersRegistryPlugin from './plugins/plugin-default-setters-registry';
 import LoadIncrementalAssetsWidgetPlugin from './plugins/plugin-load-incremental-assets-widget';
 import SaveSamplePlugin from './plugins/plugin-save-sample';
@@ -23,8 +23,13 @@ import lowcodePlugin from './plugins/plugin-lowcode-component';
 import appHelper from './appHelper';
 import './global.scss';
 
+// 自定义插件
+import PagesPlugin from './plugins/plugin-pages';
+
 async function registerPlugins() {
   await plugins.register(InjectPlugin);
+  // 页面管理
+  await plugins.register(PagesPlugin);
 
   await plugins.register(EditorInitPlugin, {
     scenarioName: 'general',
@@ -98,6 +103,7 @@ async function registerPlugins() {
   await plugins.register(SimulatorLocalePlugin);
 
   await plugins.register(lowcodePlugin);
+
 };
 
 (async function main() {

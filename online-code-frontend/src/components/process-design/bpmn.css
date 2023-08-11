@@ -1,0 +1,30 @@
+/* 背景 */
+.djs-container svg {
+    background-color: #fefefe !important;
+    background-image: radial-gradient(#ebebeb 15%, transparent 0) !important;
+    background-size: 15px 15px !important;
+}
+
+.djs-element .djs-outline {
+    rx: 5;
+    ry: 5;
+    stroke-width: 3px !important;
+    stroke-dasharray: 5,5 !important;
+}
+
+.djs-drag-group rect {
+    stroke: #ddd !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 5,5 !important;
+}
+
+/* 隐藏powered-by */
+.containers .bjs-powered-by {
+    display: none;
+}
+
+.djs-direct-editing-parent {
+    border-radius: 5px;
+    height: 28px !important;
+    border: 3px dashed #FF8888 !important;
+}

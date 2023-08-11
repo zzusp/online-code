@@ -1,0 +1,108 @@
+.property-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 10px 16px 0 #ddd, 0 6px 20px 0 #ddd;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.property-panel.expand {
+  width: 600px;
+  height: 95%;
+  z-index: 101;
+}
+
+.property-panel.collapse {
+  width: 40px;
+  height: 40px;
+}
+
+.off-screen {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../assets/off-screen-one.svg');
+  background-size: cover;
+}
+
+.off-screen-two {
+  z-index: 999;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../assets/off-screen-two.svg');
+  background-size: cover;
+}
+
+.off-screen-code {
+  height: 300px;
+}
+
+.full-screen {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../assets/full-screen-one.svg');
+  background-size: cover;
+}
+
+.full-screen-two {
+  z-index: 999;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../assets/full-screen-two.svg');
+  background-size: cover;
+}
+
+.full-screen-code {
+  z-index: 997;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.screen-code {
+  z-index: 998;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 28px;
+  height: 28px;
+  background-color: #ffffff;
+}
+
+.task-code-editor-pane {
+  border-radius: 5px;
+  border: 1px solid #DCDFE6;
+  line-height: 17px !important;
+  height: 100% !important;
+}
+
+.react-monaco-editor-container {
+  height: 100% !important;
+}
+
+.base-monaco-full-screen-icon {
+  background-image: url('../../assets/full-screen-two.svg') !important;
+  top: 0 !important;
+  right: -30px !important;
+}
+
+.base-monaco-full-screen-icon-cancel {
+  background-image: url('../../assets/off-screen-two.svg') !important;
+}

@@ -1,0 +1,129 @@
+.djs-context-pad.open {
+  margin-left: 4px;
+  padding: 0 5px 0 5px;
+  width: 64px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 10px 16px 0 #ddd, 0 6px 20px 0 #ddd;
+  box-sizing: unset !important;
+  z-index: 100;
+}
+
+.djs-context-pad.open .group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+}
+
+.djs-context-pad.open .entry {
+  margin: 6px 0 0 0;
+}
+
+.djs-context-pad.open .group .item {
+  width: 40px;
+  height: 18px;
+  font-size: 12px;
+  margin: 3px 0 0 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 自定义 contextPad 的样式 */
+
+.djs-context-pad .icon-custom-edit.entry:hover {
+  background: url('../../assets/edit.svg') center no-repeat !important;
+  background-size: cover !important;
+}
+
+.djs-context-pad .icon-custom-copy.entry:hover {
+  background: url('../../assets/copy-one.svg') center no-repeat !important;
+  background-size: cover !important;
+}
+
+.djs-context-pad .icon-custom-connection-multi.entry:hover {
+  background: url('../../assets/new-efferent.svg') center no-repeat !important;
+  background-size: cover !important;
+}
+
+.djs-context-pad .icon-custom-edit.entry:hover {
+  background: url('../../assets/edit.svg') center no-repeat !important;
+  background-size: cover !important;
+}
+
+.djs-context-pad .icon-custom-delete.entry:hover {
+  background: url('../../assets/delete.svg') center no-repeat !important;
+  background-size: cover !important;
+}
+
+.djs-context-pad .entry:hover {
+  color: #1890ff;
+}
+
+.djs-context-pad .entry {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  background-size: 94%;
+  transition: all 0.3s;
+}
+
+.icon-custom {
+  border-radius: 5px;
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+}
+
+.icon-custom::after {
+  font-size: 12px;
+  position: absolute;
+  top: 17px;
+  left: 0;
+}
+
+.icon-custom-start {
+  background-image: url('../../assets/round.svg');
+}
+
+.exclusive-gateway {
+  background-image: url('../../assets/exclusive-gateway.svg');
+}
+
+.icon-custom-end {
+  background-image: url('../../assets/handle-round.svg');
+}
+
+.java-task {
+  background-image: url('../../assets/java-code.svg');
+}
+
+.sql-task {
+  background-image: url('../../assets/sql-code.svg');
+}
+
+.http-task {
+  background-image: url('../../assets/http-code.svg');
+}
+
+.python-task {
+  background-image: url('../../assets/python-code.svg');
+}
+
+/* 操作面板按钮 */
+
+.icon-custom-edit {
+  background-image: url('../../assets/edit.svg');
+}
+
+.icon-custom-copy {
+  background-image: url('../../assets/copy-one.svg');
+}
+
+.icon-custom-connection-multi {
+  background-image: url('../../assets/new-efferent.svg');
+}
+
+.icon-custom-delete {
+  background-image: url('../../assets/delete.svg');
+}

@@ -1,5 +1,6 @@
 {
   "entry": {
+    "routes": "./src/components/routes.tsx",
     "preview": "./src/preview.tsx",
     "index": "./src/index.ts"
   },

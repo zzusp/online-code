@@ -1,0 +1,22 @@
+/* 自定义 连线 的样式 */
+
+.djs-connection .djs-visual path {
+  stroke: #dddddd !important;
+  stroke-width: 3px !important;
+  marker-start: none !important;
+  marker-end: url(#sequenceflow-arrow-normal) !important;
+}
+
+.djs-connection-preview path {
+  stroke: #dddddd !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 8 !important;
+  marker-end: url(#sequenceflow-arrow-activities) !important;
+}
+
+.djs-connection-preview polyline {
+  stroke: #dddddd !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 8 !important;
+  marker-end: url(#sequenceflow-arrow-activities) !important;
+}
