@@ -95,7 +95,7 @@ async function registerPlugins() {
 
   await plugins.register(SaveSamplePlugin);
 
-  await plugins.register(PreviewSamplePlugin);
+  // await plugins.register(PreviewSamplePlugin);
 
   await plugins.register(CustomSetterSamplePlugin);
 

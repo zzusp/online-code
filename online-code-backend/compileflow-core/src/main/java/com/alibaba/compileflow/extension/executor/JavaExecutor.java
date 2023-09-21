@@ -1,11 +1,12 @@
 package com.alibaba.compileflow.extension.executor;
 
+import com.alibaba.compileflow.engine.process.preruntime.compiler.impl.BpmnFlowClassLoader;
 import com.alibaba.compileflow.extension.cmd.AbstractJavaCmd;
 import com.alibaba.compileflow.extension.core.JavaStringCompiler;
-import com.alibaba.compileflow.extension.log.FlowLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class JavaExecutor {
@@ -13,7 +14,7 @@ public class JavaExecutor {
     private static final Logger log = LoggerFactory.getLogger(JavaExecutor.class);
 
     @SuppressWarnings("unchecked")
-    public Map<String, Object> execute(Map<String, Object> flowVars, Map<String, Object> vars, String taskId, String taskName) {
+    public Map<String, Object> execute(Map<String, Object> flowVars, Map<String, Object> vars, String taskId, String taskName) throws UnsupportedEncodingException {
         log.debug("===========================");
         log.debug("执行{}（{}）节点", taskName, taskId);
         if (!flowVars.containsKey(taskId)) {
@@ -39,8 +40,9 @@ public class JavaExecutor {
         return (boolean) result;
     }
 
-    protected Object execute(String code, Map<String, Object> vars) {
+    public Object execute(String code, Map<String, Object> vars) {
         JavaStringCompiler compiler = new JavaStringCompiler(code);
+        compiler.setFlowClassLoader(BpmnFlowClassLoader.getInstance());
         log.debug("开始编译");
         if (!compiler.compile()) {
             log.debug("编译异常{}", compiler.getCompilerMessage());
@@ -52,7 +54,6 @@ public class JavaExecutor {
         long startTime = System.currentTimeMillis();
         Object result = ((AbstractJavaCmd) compiler.getClassInstance()).execute(vars);
         log.debug("运行成功");
-        log.debug("运行日志：\r\n{}", String.join("\r\n", FlowLogger.getMessage()));
         log.debug("运行耗时：{}ms", System.currentTimeMillis() - startTime);
         return result;
     }

@@ -6,7 +6,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.SQLException;
 
 @Service
 public class SqlRunnerFactory {
@@ -19,17 +19,17 @@ public class SqlRunnerFactory {
         this.dataSource = dataSource;
     }
 
-    public SqlRunner openRunner() {
+    public DefaultSqlRunner openRunner() {
         return openRunner(null, false);
     }
 
-    public SqlRunner openRunner(boolean autoCommit) {
+    public DefaultSqlRunner openRunner(boolean autoCommit) {
         return openRunner(null, autoCommit);
     }
 
-    public SqlRunner openRunner(TransactionIsolationLevel level, boolean autoCommit) {
+    public DefaultSqlRunner openRunner(TransactionIsolationLevel level, boolean autoCommit) {
         try {
-            return new SqlRunner(transactionFactory.newTransaction(dataSource, level, autoCommit).getConnection());
+            return new DefaultSqlRunner(transactionFactory.newTransaction(dataSource, level, autoCommit).getConnection());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return null;

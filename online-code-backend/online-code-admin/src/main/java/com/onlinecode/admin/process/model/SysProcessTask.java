@@ -8,6 +8,9 @@ public class SysProcessTask {
     private String taskName;
     private String executeCmd;
 
+    public SysProcessTask() {
+    }
+
     public SysProcessTask(Long id, String procCode, String taskCode, String taskName, String executeCmd) {
         this.id = id;
         this.procCode = procCode;

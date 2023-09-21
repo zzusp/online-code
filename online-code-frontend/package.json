@@ -24,19 +24,21 @@
     "@alilc/lowcode-plugin-inject": "^1.2.1",
     "@alilc/lowcode-plugin-manual": "^1.0.4",
     "@alilc/lowcode-plugin-schema": "^1.0.2",
+    "@alilc/lowcode-plugin-set-ref-prop": "^1.0.1",
     "@alilc/lowcode-plugin-simulator-select": "^1.0.2",
     "@alilc/lowcode-plugin-undo-redo": "^1.0.0",
     "@alilc/lowcode-plugin-zh-en": "^1.0.0",
-    "@alilc/lowcode-plugin-set-ref-prop": "^1.0.1",
     "@alilc/lowcode-react-renderer": "^1.1.2",
     "@alilc/lowcode-setter-behavior": "^1.0.0",
     "@alilc/lowcode-setter-title": "^1.0.2",
+    "@icedesign/title": "^1.0.5",
     "antd": "^4.21.4",
-    "moment": "^2.29.3",
-    "uuid": "^8.3.2",
     "bpmn-js": "^13.2.2",
     "bpmn-js-properties-panel": "^3.0.0",
-    "react-router-dom": "^6.14.1"
+    "moment": "^2.29.3",
+    "react-json-view-lite": "^1.0.0",
+    "react-router-dom": "^6.14.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@alib/build-scripts": "^0.1.18",
@@ -55,6 +57,8 @@
     "tsconfig-paths-webpack-plugin": "^3.2.0"
   },
   "resolutions": {
-    "@babel/core": "7.20.12"
+    "@babel/core": "7.20.12",
+    "@alilc/lowcode-plugin-code-editor/@babel/preset-env": "7.22.9",
+    "@alilc/lowcode-plugin-datasource-pane/@babel/preset-env": "7.22.9"
   }
 }

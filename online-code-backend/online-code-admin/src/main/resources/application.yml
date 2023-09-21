@@ -1,8 +1,101 @@
 server:
   port: 7001
 
-# 数据源配置
 spring:
+  redis:
+    # 集群只是用db0
+    database: 0
+    # 密码
+    password: V6ZuPvR1M2UA
+    # 以毫秒为单位的连接超时时间
+    timeout: 3000
+    cluster:
+      nodes: 124.222.119.198:6379,124.222.119.198:6380,124.222.119.198:6381,124.222.119.198:6382,124.222.119.198:6383,124.222.119.198:6384
+      # 在集群中执行命令时要遵循的最大重定向数目
+      max-redirects: 5
+    jedis:
+      pool:
+        # Redis连接池在给定时间可以分配的最大连接数。使用负值无限制
+        max-active: 2000
+        # 连接分配在池被耗尽时抛出异常之前应该阻塞的最长时间量(以毫秒为单位)。使用负值可以无限期地阻止
+        max-wait: 1000
+        #  连接池中的最大空闲连接
+        max-idle: 500
+        # 目标为保持在池中的最小空闲连接数。这个设置只有在设置max-idle的情况下才有效果
+        min-idle: 5
+    redisson:
+      config:
+        clusterServersConfig:
+          #  连接空闲超时，单位：毫秒
+          idleConnectionTimeout: 100000
+          #  连接超时，单位：毫秒
+          connectTimeout: 10000
+          #  命令等待超时，单位：毫秒
+          timeout: 3000
+          #  命令失败重试次数
+          retryAttempts: 3
+          #  命令重试发送时间间隔，单位：毫秒
+          retryInterval: 1500
+          #  失败从节点重连间隔时间
+          failedSlaveReconnectionInterval: 3000
+          #  失败从节点校验间隔时间
+          failedSlaveCheckInterval: 60000
+          #  密码
+          password: ${spring.redis.password}
+          #  单个连接最大订阅数量
+          subscriptionsPerConnection: 5
+          #  客户端名称
+          clientName: null
+          #  负载均衡器
+          loadBalancer: "!<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}"
+          #  发布和订阅连接的最小空闲连接数
+          subscriptionConnectionMinimumIdleSize: 1
+          #  发布和订阅连接池大小
+          subscriptionConnectionPoolSize: 50
+          #  从节点最小空闲连接数
+          slaveConnectionMinimumIdleSize: 24
+          #  从节点连接池大小
+          slaveConnectionPoolSize: 64
+          #  主节点最小空闲连接数
+          masterConnectionMinimumIdleSize: 24
+          #  主节点连接池大小
+          masterConnectionPoolSize: 64
+          #  读取操作的负载均衡模式
+          readMode: "SLAVE"
+          #  订阅操作的负载均衡模式
+          subscriptionMode: "SLAVE"
+          #  集群节点地址
+          nodeAddresses:
+            - "redis://124.222.119.198:6379"
+            - "redis://124.222.119.198:6380"
+            - "redis://124.222.119.198:6381"
+            - "redis://124.222.119.198:6382"
+            - "redis://124.222.119.198:6383"
+            - "redis://124.222.119.198:6384"
+          #  对主节点变化节点状态扫描的时间间隔 - 单位是毫秒
+          scanInterval: 1000
+          #  ping连接间隔
+          pingConnectionInterval: 0
+          #  是否保持连接
+          keepAlive: false
+          #  默认启用 tcpNoDelay 设置
+          tcpNoDelay: false
+        #  这个线程池数量被所有RTopic对象监听器，RRemoteService调用者和RExecutorService任务共同共享。默认当前处理核数量 * 2
+        threads: 16
+        #  这个线程池数量是在一个Redisson实例内，被其创建的所有分布式数据类型和服务，以及底层客户端所一同共享的线程池里保存的线程数量
+        nettyThreads: 32
+        #  Redisson的对象编码类是用于将对象进行序列化和反序列化，以实现对该对象在Redis里的读取和存储。
+        #  Redisson提供了多种的对象编码应用，以供大家选择：https://github.com/redisson/redisson/wiki/4.-data-serialization
+        #  默认 org.redisson.codec.MarshallingCodec，部分编码需要引入编码对于依赖jar包
+        codec: "!<org.redisson.codec.MarshallingCodec> {}"
+        #  传输模式，默认NIO，可选参数：
+        #  TransportMode.NIO,
+        #  TransportMode.EPOLL - 需要依赖里有netty-transport-native-epoll包（Linux）
+        #  TransportMode.KQUEUE - 需要依赖里有 netty-transport-native-kqueue包（macOS）
+        transportMode: "NIO"
+        #  配置看门狗的默认超时时间为30s，这里改为10s
+        lockWatchdogTimeout: 10000
+  # 数据源配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver

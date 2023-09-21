@@ -20,6 +20,13 @@ public class SysProcess implements Serializable {
     private String delFlag;
 
     private List<SysProcessTask> tasks;
+    /**
+     * 拷贝来源流程编码
+     */
+    private String copyProcCode;
+
+    public SysProcess() {
+    }
 
     public SysProcess(Long id, String procCode, String procName, String bpmn, String auth, String status,
                       LocalDateTime createTime, String createBy, LocalDateTime updateTime, String updateBy,
@@ -139,5 +146,13 @@ public class SysProcess implements Serializable {
 
     public void setTasks(List<SysProcessTask> tasks) {
         this.tasks = tasks;
+    }
+
+    public String getCopyProcCode() {
+        return copyProcCode;
+    }
+
+    public void setCopyProcCode(String copyProcCode) {
+        this.copyProcCode = copyProcCode;
     }
 }

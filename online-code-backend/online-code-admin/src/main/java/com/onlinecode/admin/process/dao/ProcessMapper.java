@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface ProcessMapper {
 
-    @Select("SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
-            " remark FROM sys_process WHERE del_flag='0'")
+    @Select("<script>SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
+            " remark FROM sys_process WHERE del_flag='0' " +
+            "<if test=\"procCode != null and procCode != ''\"> AND proc_code like concat(\"%\",#{procCode},\"%\") </if>" +
+            "<if test=\"procName != null and procName != ''\"> AND proc_name like concat(\"%\",#{procName},\"%\") </if>" +
+            "</script>")
     @Results(value = {
             @Result(column = "id", property = "id"),
             @Result(column = "proc_code", property = "procCode"),
@@ -23,7 +26,7 @@ public interface ProcessMapper {
             @Result(column = "update_by", property = "updateBy"),
             @Result(column = "remark", property = "remark")
     })
-    List<SysProcess> getAllProcess();
+    List<SysProcess> getAllProcess(@Param("procCode") String procCode, @Param("procName") String procName);
 
     @Select("SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
             " remark FROM sys_process WHERE del_flag='0' AND id = #{id}")

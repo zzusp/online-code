@@ -12,7 +12,7 @@ import com.alibaba.compileflow.engine.definition.common.EndElement;
 import com.alibaba.compileflow.engine.definition.common.TransitionNode;
 import com.alibaba.compileflow.engine.definition.common.TransitionSupport;
 import com.alibaba.compileflow.engine.definition.common.var.impl.Var;
-import com.alibaba.compileflow.engine.process.preruntime.compiler.impl.FlowClassLoader;
+import com.alibaba.compileflow.engine.process.preruntime.compiler.impl.BpmnFlowClassLoader;
 import com.alibaba.compileflow.engine.process.preruntime.converter.FlowModelConverter;
 import com.alibaba.compileflow.engine.process.preruntime.converter.impl.BpmnModelConverter;
 import com.alibaba.compileflow.engine.process.preruntime.converter.impl.parser.model.StringFlowStreamSource;
@@ -63,7 +63,7 @@ public class BpmnStringProcessEngineImpl implements ProcessEngine<BpmnModel> {
 
     @Override
     public void preCompile(String... codes) {
-        this.preCompile(null, codes);
+        this.preCompile(BpmnFlowClassLoader.getInstance(), codes);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class BpmnStringProcessEngineImpl implements ProcessEngine<BpmnModel> {
 
     @Override
     public void reload(String code) {
-        FlowClassLoader.getInstance().clearCache();
+        BpmnFlowClassLoader.getInstance().clearCache();
         AbstractProcessRuntime<BpmnModel> runtime = this.runtimeCache.computeIfPresent(code,
                 (k, v) -> this.getRuntimeFromSource(code));
         assert runtime != null;
@@ -97,7 +97,7 @@ public class BpmnStringProcessEngineImpl implements ProcessEngine<BpmnModel> {
 
     private AbstractProcessRuntime<BpmnModel> getCompiledRuntime(String code) {
         AbstractProcessRuntime<BpmnModel> runtime = this.getRuntimeFromSource(code);
-        runtime.compile();
+        runtime.compile(BpmnFlowClassLoader.getInstance());
         return runtime;
     }
 

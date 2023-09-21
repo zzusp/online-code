@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Form, Input, Nav, Shell, Box, Button} from '@alifd/next';
+import {Form, Input, Nav, Shell, Box, Button, Card} from '@alifd/next';
+import IceTitle from '@icedesign/title';
 
 import request from 'universal-request';
 import { AsObject } from 'universal-request/lib/types';
@@ -25,9 +26,9 @@ import './label.css';
 import './palette.css';
 import './property-panel.css';
 
+import {useParams} from "react-router-dom";
 import CodeEditor from "./editor";
-import {Link, useParams} from "react-router-dom";
-import {default as Renderer} from "../pages/renderer";
+import RunCode from "./run-code";
 
 class BpmnDesign extends React.Component<any, any> {
 
@@ -62,7 +63,7 @@ class BpmnDesign extends React.Component<any, any> {
   }
 
   async getProcessInfo(procId: any) {
-    await request({url: 'http://127.0.0.1:7001/process/getInfoWithTaskById?id=' + procId, method: 'GET'})
+    await request({url: '/onlinecode-api/process/getInfoWithTaskById?id=' + procId, method: 'GET'})
       .then((res: any) => {
         if (res.status === 200 && res.data && res.data.code === 200) {
           const proc = res.data.data;
@@ -96,7 +97,7 @@ class BpmnDesign extends React.Component<any, any> {
     proc.bpmn = this.state.bpmnStr;
     proc.tasks = tasks;
     console.log(proc);
-    await request({url: 'http://127.0.0.1:7001/process/save', method: 'POST', data: proc as AsObject})
+    await request({url: '/onlinecode-api/process/save', method: 'POST', data: proc as AsObject})
       .then((res: any) => {
         console.log(res);
         if (res.status === 200 && res.data && res.data.code === 200) {
@@ -323,6 +324,10 @@ class BpmnDesign extends React.Component<any, any> {
     }
   }
 
+  back() {
+    window.history.go(-1);
+  }
+
   run() {
   }
 
@@ -349,7 +354,7 @@ class BpmnDesign extends React.Component<any, any> {
         <Shell.Action>
           <Box direction="row" spacing={10}>
             <Button type="primary" onClick={() => this.saveProcessInfo()}>保存</Button>
-            <Link to={-1}><Button type="normal">返回</Button></Link>
+            <Button type="normal" onClick={() => this.back()}>返回</Button>
           </Box>
         </Shell.Action>
 
@@ -360,9 +365,8 @@ class BpmnDesign extends React.Component<any, any> {
             <div className={['property-panel', this.state.collapse ? 'collapse' : 'expand'].join(" ")}>
               {
                 this.state.collapse ? null :
-                  <h3 style={{"position": "absolute", "top": "10px", "left": "20px", "height": "20px", "margin": 0}}>
-                    {this.state.task.type === 'bpmn:SequenceFlow' ? '连线' : "节点"}
-                  </h3>
+                  <IceTitle text={this.state.task.type === 'bpmn:SequenceFlow' ? '连线' : "节点"}
+                            style={{position:'absolute', margin:'20px 0 0 20px'}} />
               }
               <div className={this.state.collapse ? 'full-screen' : 'off-screen'}
                    onClick={() => this.toggleCollapse()}/>
@@ -391,6 +395,9 @@ class BpmnDesign extends React.Component<any, any> {
                     </FormItem>
                 }
               </Form>
+
+              <RunCode code={this.state.task.executeCmd}/>
+
             </div>
           </div>
         </Shell.Content>

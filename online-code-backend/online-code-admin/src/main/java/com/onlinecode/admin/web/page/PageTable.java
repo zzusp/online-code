@@ -1,7 +1,5 @@
 package com.onlinecode.admin.web.page;
 
-import com.onlinecode.admin.web.R;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

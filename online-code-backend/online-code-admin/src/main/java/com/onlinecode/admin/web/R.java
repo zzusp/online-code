@@ -46,7 +46,7 @@ public class R<T> implements Serializable {
      * 请求成功
      *
      * @param data 结果
-     * @param <T>    泛型对象
+     * @param <T>  泛型对象
      * @return 响应结果对象
      */
     public static <T> R<T> ok(T data) {
@@ -162,7 +162,7 @@ public class R<T> implements Serializable {
     /**
      * 请求失败（如：服务器异常）
      *
-     * @param code  状态码
+     * @param code    状态码
      * @param message 信息
      * @param <T>     泛型对象
      * @return 响应结果对象

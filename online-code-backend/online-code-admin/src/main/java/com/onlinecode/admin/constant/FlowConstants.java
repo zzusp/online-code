@@ -13,5 +13,13 @@ public class FlowConstants {
     public static final String FLOW_PROCESS_DIR = System.getProperty("user.dir") + File.separator
             + ".flowprocesses" + File.separator;
     public static final String FLOW_PROCESS_SUFFIX = ".json";
+    /**
+     * 分布式业务锁key的前缀
+     */
+    public static final String BUSINESS_LOCK = "business_lock:";
+    /**
+     * 分布式业务数据缓存key的前缀
+     */
+    public static final String BUSINESS_CACHE = "business_cache:";
 
 }

@@ -34,6 +34,7 @@
         <mybatis-spring.version>3.0.2</mybatis-spring.version>
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <redisson.boot.version>3.18.0</redisson.boot.version>
         <fastjson2.version>2.0.24</fastjson2.version>
         <junit.version>4.12</junit.version>
     </properties>
@@ -98,6 +99,12 @@
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector-j.version}</version>
+            </dependency>
+            <!-- redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.boot.version}</version>
             </dependency>
             <!-- fastjson2 -->
             <dependency>

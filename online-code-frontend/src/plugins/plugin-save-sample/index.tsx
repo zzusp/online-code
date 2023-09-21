@@ -1,12 +1,14 @@
 import { IPublicModelPluginContext } from '@alilc/lowcode-types';
 import { Button } from '@alifd/next';
 import {
-  saveSchema,
   resetSchema,
 } from '../../services/mockService';
+import {
+  saveSchema
+} from '../../services/schemaService';
 
 // 保存功能示例
-const SaveSamplePlugin = (ctx: IPublicModelPluginContext) => {
+const SaveSamplePlugin = (ctx: IPublicModelPluginContext | any) => {
   return {
     async init() {
       const { skeleton, hotkey, config } = ctx;
@@ -29,8 +31,8 @@ const SaveSamplePlugin = (ctx: IPublicModelPluginContext) => {
           align: 'right',
         },
         content: (
-          <Button onClick={() => save()}>
-            保存到本地
+          <Button type="primary" onClick={() => save()}>
+            保存
           </Button>
         ),
       });
@@ -47,7 +49,7 @@ const SaveSamplePlugin = (ctx: IPublicModelPluginContext) => {
           </Button>
         ),
       });
-      hotkey.bind('command+s', (e) => {
+      hotkey.bind('command+s', (e: any) => {
         e.preventDefault();
         save();
       });

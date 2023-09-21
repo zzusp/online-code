@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Nav, Shell} from '@alifd/next';
 import { default as Renderer } from './renderer';
+import request from 'universal-request';
 
 import {
   Link,
@@ -10,6 +11,7 @@ import {
 const Pages = () => {
 
   const { page: currentPage = 'login' } = useParams();
+  const [ menu, setMenu ] = useState([] as React.JSX.Element[]);
 
   useEffect(() => {
     console.log("page change");
@@ -21,6 +23,52 @@ const Pages = () => {
         <Renderer page={currentPage} />
       </div>
     )
+  }
+
+  async function menuInfo() {
+    let data = {
+      procCode: 'menuList'
+    };
+    await request({url: '/onlinecode-api/process/run', method: 'POST', data: data})
+      .then((res: any) => {
+        console.log(res);
+        if (res.status === 200 && res.data && res.data.code === 200) {
+          const menus = res.data.data;
+          setMenu(toNav(menus));
+          console.log(toNav(menus));
+        }
+      })
+      .catch((err: any) => {});
+  }
+
+  function toNav(menus: any[]) {
+    if (!menus || menus.length === 0) {
+      return [];
+    }
+    let arr: React.JSX.Element[] = [];
+    menus.forEach(m => {
+      // 菜单组
+      if (m.type === '0') {
+        arr.push(<Nav.SubNav label={m.name}>{toNav(m.children)}</Nav.SubNav>);
+      } else if (m.type === '1') { // 菜单
+        if (m.mode === '0') { // schema
+          arr.push(<Nav.Item key={m.code}><Link to={`/pages/` + m.code}>{m.name}</Link></Nav.Item>);
+        } else if (m.mode === '1') { // react
+          arr.push(<Nav.Item key={m.code}><Link to={m.url}>{m.name}</Link></Nav.Item>);
+        } else if (m.mode === '2') { // iframe
+          if (m.new_tab === '1') { // 新标签页
+            arr.push(<Nav.Item key='editor'><a href={m.url} target='_blank'>{m.name}</a></Nav.Item>);
+          } else {
+            arr.push(<Nav.Item key='editor'><a href={m.url}>{m.name}</a></Nav.Item>);
+          }
+        }
+      }
+    });
+    return arr;
+  }
+
+  if (menu.length === 0) {
+    menuInfo();
   }
 
   return (
@@ -51,18 +99,13 @@ const Pages = () => {
 
         <Shell.Navigation>
           <Nav embeddable aria-label="global navigation" defaultSelectedKeys={[currentPage]} activeDirection={'right'}>
-            {/*<Nav.Item key='login'><Link to={`/pages/login`}>登录页</Link></Nav.Item>*/}
-            <Nav.Item key='home'><Link to={`/pages/home`}>首页</Link></Nav.Item>
-            <Nav.Item key='menu'><Link to={`/pages/menu`}>菜单管理</Link></Nav.Item>
-            <Nav.Item key='process'><Link to={`/pages/process`}>流程管理</Link></Nav.Item>
-            {/*<Nav.Item key='process'><Link to={`/process/design`}>流程编排</Link></Nav.Item>*/}
-            <Nav.Item key='editor'><a href='/editor.html' target={'_blank'}>低代码引擎</a></Nav.Item>
+            {menu.length === 0 ? '' : menu}
           </Nav>
         </Shell.Navigation>
 
         <Shell.Content>
           <div style={{ background: "#fff" }}>
-            <Renderer page={currentPage} />
+            {menu.length === 0 ? '' : <Renderer page={currentPage} />}
           </div>
         </Shell.Content>
       </Shell>

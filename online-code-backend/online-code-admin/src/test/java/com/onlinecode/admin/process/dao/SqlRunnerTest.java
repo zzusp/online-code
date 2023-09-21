@@ -1,6 +1,5 @@
 package com.onlinecode.admin.process.dao;
 
-import com.onlinecode.admin.util.SpringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class SqlRunnerTest {
     @Test
     public void selectList() {
 
-        SqlRunner sqlRunner = sqlRunnerFactory.openRunner();
+        DefaultSqlRunner sqlRunner = sqlRunnerFactory.openRunner();
         Map<String, Object> params = new HashMap<>(8);
         params.put("biz_tag", "leaf-segment-test");
         List<Map<String, Object>> list = sqlRunner.selectList("SELECT biz_tag, max_id, step, update_time FROM leaf_alloc WHERE biz_tag=#{biz_tag}", params);
@@ -41,6 +40,9 @@ public class SqlRunnerTest {
         num = sqlRunner.update("UPDATE leaf_alloc SET step = #{step}, update_time = #{update_time} WHERE biz_tag = #{biz_tag}", updateData);
         sqlRunner.commit();
         sqlRunner.close();
+
+
+
     }
 
 }

@@ -28,6 +28,18 @@ public interface ProcessTaskMapper {
     })
     List<SysProcessTask> getByProcCode(@Param("procCode") String procCode);
 
+
+    @Select("SELECT id, proc_code, task_code, task_name, execute_cmd FROM sys_process_task" +
+            " WHERE proc_code = #{procCode}")
+    @Results(value = {
+            @Result(column = "id", property = "id"),
+            @Result(column = "proc_code", property = "procCode"),
+            @Result(column = "task_code", property = "taskCode"),
+            @Result(column = "task_name", property = "taskName"),
+            @Result(column = "execute_cmd", property = "executeCmd")
+    })
+    SysProcessTask getByProcCodeAndTaskCode(@Param("procCode") String procCode, @Param("taskCode") String taskCode);
+
     @Insert("<script>" +
             "INSERT INTO sys_process_task(id, proc_code, task_code, task_name, execute_cmd)" +
             " VALUES " +

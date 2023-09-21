@@ -12,7 +12,7 @@ public class AdminApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
-        System.out.println("AdminApplication start ok!!!");
+        System.out.println("onlinecode server start ok!!!");
     }
 
 }

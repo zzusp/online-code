@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import React, {useState, useEffect} from 'react';
 import {Loading} from '@alifd/next';
 import mergeWith from 'lodash/mergeWith';
@@ -8,11 +7,9 @@ import ReactRenderer from '@alilc/lowcode-react-renderer';
 import {injectComponents} from '@alilc/lowcode-plugin-inject';
 import appHelper from '../../appHelper';
 import {
-  getProjectSchemaFromLocalStorage,
-  getPackagesFromLocalStorage,
-  getPreviewLocale,
-  setPreviewLocale
-} from '../../services/mockService';
+  getProjectSchemaFromDb,
+  getPackagesFromAssets
+} from '../../services/schemaService';
 import { useNavigate } from "react-router-dom";
 
 const Renderer = (props) => {
@@ -30,10 +27,8 @@ const Renderer = (props) => {
   }, [page])
 
   async function init() {
-    const scenarioName = page;
-    const packages = getPackagesFromLocalStorage(scenarioName);
-    const projectSchema = getProjectSchemaFromLocalStorage(scenarioName);
-    console.log(projectSchema)
+    const projectSchema = await getProjectSchemaFromDb(page);
+    const packages = await getPackagesFromAssets();
     const {
       componentsMap: componentsMapArray,
       componentsTree,

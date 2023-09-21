@@ -5,7 +5,7 @@ import { IPublicTypeProjectSchema, IPublicEnumTransformStage } from '@alilc/lowc
 import DefaultPageSchema from './defaultPageSchema.json';
 import DefaultI18nSchema from './defaultI18nSchema.json';
 
-const generateProjectSchema = (pageSchema: any, i18nSchema: any): IPublicTypeProjectSchema => {
+export const generateProjectSchema = (pageSchema: any, i18nSchema: any): IPublicTypeProjectSchema => {
   return {
     componentsTree: [pageSchema],
     componentsMap: material.componentsMap as any,
@@ -48,7 +48,7 @@ export const resetSchema = async (scenarioName: string = 'unknown') => {
   Message.success('成功重置页面');
 }
 
-const getLSName = (scenarioName: string, ns: string = 'projectSchema') => `${scenarioName}:${ns}`;
+export const getLSName = (scenarioName: string, ns: string = 'projectSchema') => `${scenarioName}:${ns}`;
 
 export const getProjectSchemaFromLocalStorage = (scenarioName: string) => {
   if (!scenarioName) {
@@ -73,7 +73,7 @@ const setProjectSchemaToLocalStorage = (scenarioName: string) => {
   );
 }
 
-const setPackagesToLocalStorage = async (scenarioName: string) => {
+export const setPackagesToLocalStorage = async (scenarioName: string) => {
   if (!scenarioName) {
     console.error('scenarioName is required!');
     return;
