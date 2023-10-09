@@ -4,7 +4,7 @@
   margin: 0;
   overflow: hidden;
   text-rendering: optimizeLegibility;
-  -webkit-user-select: none;
+  -webkit-user-select: auto;
   -webkit-user-drag: none;
   -webkit-text-size-adjust: none;
   -webkit-touch-callout: none;

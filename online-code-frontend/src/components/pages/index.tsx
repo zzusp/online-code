@@ -85,7 +85,7 @@ const Pages = () => {
         </Shell.Navigation>
         <Shell.Action>
           <img
-            src="https://img.alicdn.com/tfs/TB1.ZBecq67gK0jSZFHXXa9jVXa-904-826.png"
+            src="./img/TB1.ZBecq67gK0jSZFHXXa9jVXa-904-826.png"
             style={{
               width: '24px',
               height: '24px',
