@@ -58,7 +58,8 @@ public class BpmInitializer implements InitializingBean, ApplicationContextAware
         configuration.addMapper(ProcessTaskMapper.class);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-            List<SysProcess> list = sqlSession.getMapper(ProcessMapper.class).getAllProcess(null, null);
+            List<SysProcess> list = sqlSession.getMapper(ProcessMapper.class).getAllProcess(null,
+                    null, null);
             if (list.isEmpty()) {
                 log.info("no process bpmn need to init...");
             } else {

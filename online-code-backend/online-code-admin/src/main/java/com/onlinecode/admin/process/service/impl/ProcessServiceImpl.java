@@ -87,9 +87,10 @@ public class ProcessServiceImpl implements ProcessService {
             if (pageParam.getParam() == null) {
                 pageParam.setParam(new SysProcess());
             }
+            String menuCode = pageParam.getParam().getMenuCode();
             String procCode = pageParam.getParam().getProcCode();
             String procName = pageParam.getParam().getProcName();
-            List<SysProcess> list = sqlSession.getMapper(ProcessMapper.class).getAllProcess(procCode, procName);
+            List<SysProcess> list = sqlSession.getMapper(ProcessMapper.class).getAllProcess(menuCode, procCode, procName);
             PageInfo<SysProcess> pageInfo = new PageInfo<>(list);
             return R.ok(PageTable.page(pageInfo.getTotal(), pageInfo.getList()));
         }

@@ -7,6 +7,7 @@ import java.util.List;
 public class SysProcess implements Serializable {
 
     private Long id;
+    private String menuCode;
     private String procCode;
     private String procName;
     private String bpmn;
@@ -28,10 +29,11 @@ public class SysProcess implements Serializable {
     public SysProcess() {
     }
 
-    public SysProcess(Long id, String procCode, String procName, String bpmn, String auth, String status,
-                      LocalDateTime createTime, String createBy, LocalDateTime updateTime, String updateBy,
-                      String remark) {
+    public SysProcess(Long id, String menuCode, String procCode, String procName, String bpmn, String auth,
+                      String status, LocalDateTime createTime, String createBy, LocalDateTime updateTime,
+                      String updateBy, String remark) {
         this.id = id;
+        this.menuCode = menuCode;
         this.procCode = procCode;
         this.procName = procName;
         this.bpmn = bpmn;
@@ -50,6 +52,14 @@ public class SysProcess implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMenuCode() {
+        return menuCode;
+    }
+
+    public void setMenuCode(String menuCode) {
+        this.menuCode = menuCode;
     }
 
     public String getProcCode() {

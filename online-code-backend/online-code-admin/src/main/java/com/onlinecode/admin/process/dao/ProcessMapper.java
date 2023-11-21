@@ -8,13 +8,15 @@ import java.util.List;
 
 public interface ProcessMapper {
 
-    @Select("<script>SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
-            " remark FROM sys_process WHERE del_flag='0' " +
+    @Select("<script>SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +
+            " update_time, update_by, remark FROM sys_process WHERE del_flag='0' " +
+            "<if test=\"menuCode != null and menuCode != ''\"> AND menu_code = #{menuCode} </if>" +
             "<if test=\"procCode != null and procCode != ''\"> AND proc_code like concat(\"%\",#{procCode},\"%\") </if>" +
             "<if test=\"procName != null and procName != ''\"> AND proc_name like concat(\"%\",#{procName},\"%\") </if>" +
             "</script>")
     @Results(value = {
             @Result(column = "id", property = "id"),
+            @Result(column = "menu_code", property = "menuCode"),
             @Result(column = "proc_code", property = "procCode"),
             @Result(column = "proc_name", property = "procName"),
             @Result(column = "bpmn", property = "bpmn"),
@@ -26,12 +28,14 @@ public interface ProcessMapper {
             @Result(column = "update_by", property = "updateBy"),
             @Result(column = "remark", property = "remark")
     })
-    List<SysProcess> getAllProcess(@Param("procCode") String procCode, @Param("procName") String procName);
+    List<SysProcess> getAllProcess(@Param("menuCode") String menuCode, @Param("procCode") String procCode,
+                                   @Param("procName") String procName);
 
-    @Select("SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
-            " remark FROM sys_process WHERE del_flag='0' AND id = #{id}")
+    @Select("SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time," +
+            " update_by, remark FROM sys_process WHERE del_flag='0' AND id = #{id}")
     @Results(value = {
             @Result(column = "id", property = "id"),
+            @Result(column = "menu_code", property = "menuCode"),
             @Result(column = "proc_code", property = "procCode"),
             @Result(column = "proc_name", property = "procName"),
             @Result(column = "bpmn", property = "bpmn"),
@@ -45,10 +49,11 @@ public interface ProcessMapper {
     })
     SysProcess getById(@Param("id") Long id);
 
-    @Select("SELECT id, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time, update_by," +
-            " remark FROM sys_process WHERE del_flag='0' AND proc_code = #{procCode}")
+    @Select("SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time," +
+            " update_by, remark FROM sys_process WHERE del_flag='0' AND proc_code = #{procCode}")
     @Results(value = {
             @Result(column = "id", property = "id"),
+            @Result(column = "menu_code", property = "menuCode"),
             @Result(column = "proc_code", property = "procCode"),
             @Result(column = "proc_name", property = "procName"),
             @Result(column = "bpmn", property = "bpmn"),
@@ -62,14 +67,14 @@ public interface ProcessMapper {
     })
     SysProcess getByProcCode(@Param("procCode") String procCode);
 
-    @Insert("INSERT INTO sys_process(id, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +
+    @Insert("INSERT INTO sys_process(id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +
             " update_time, update_by, remark, del_flag)" +
-            " VALUES (#{id}, #{procCode}, #{procName}, #{bpmn}, #{auth}, #{status}, #{createTime}, #{createBy}," +
-            " #{updateTime}, #{updateBy}, #{remark}, '0')")
+            " VALUES (#{id}, #{menuCode}, #{procCode}, #{procName}, #{bpmn}, #{auth}, #{status}, #{createTime}," +
+            " #{createBy}, #{updateTime}, #{updateBy}, #{remark}, '0')")
     void insert(SysProcess sysProcess);
 
-    @Update("UPDATE sys_process SET proc_name = #{procName}, bpmn = #{bpmn}, auth = #{auth}, status = #{status}," +
-            " update_time = #{updateTime}, update_by = #{updateBy}, remark = #{remark} WHERE id = #{id}")
+    @Update("UPDATE sys_process SET menu_code = #{menuCode}, proc_name = #{procName}, bpmn = #{bpmn}, auth = #{auth}," +
+            " status = #{status}, update_time = #{updateTime}, update_by = #{updateBy}, remark = #{remark} WHERE id = #{id}")
     void update(SysProcess sysProcess);
 
     @Delete("DELETE FROM sys_process WHERE id = #{id}")
