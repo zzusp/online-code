@@ -57,9 +57,9 @@ const Pages = () => {
           arr.push(<Nav.Item key={m.code}><Link to={m.url}>{m.name}</Link></Nav.Item>);
         } else if (m.mode === '2') { // iframe
           if (m.new_tab === '1') { // 新标签页
-            arr.push(<Nav.Item key='editor'><a href={m.url} target='_blank'>{m.name}</a></Nav.Item>);
+            arr.push(<Nav.Item key={m.code}><a href={m.url} target='_blank'>{m.name}</a></Nav.Item>);
           } else {
-            arr.push(<Nav.Item key='editor'><a href={m.url}>{m.name}</a></Nav.Item>);
+            arr.push(<Nav.Item key={m.code}><a href={m.url}>{m.name}</a></Nav.Item>);
           }
         }
       }
