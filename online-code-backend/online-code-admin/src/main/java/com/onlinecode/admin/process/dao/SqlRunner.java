@@ -10,9 +10,13 @@ public interface SqlRunner extends Closeable {
 
     List<Map<String, Object>> selectList(String sql, Map<String, Object> parameters);
 
+    List<Map<String, Object>> selectList(String sql, Map<String, Object> parameters, boolean camelCase);
+
     Map<String, Object> selectOne(String sql);
 
     Map<String, Object> selectOne(String sql, Map<String, Object> parameters);
+
+    Map<String, Object> selectOne(String sql, Map<String, Object> parameters, boolean camelCase);
 
     int insert(String sql, Map<String, Object> parameters);
 

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DefaultSqlRunner implements SqlRunner {
 
@@ -131,6 +133,11 @@ public class DefaultSqlRunner implements SqlRunner {
 
     @Override
     public List<Map<String, Object>> selectList(String sql, Map<String, Object> parameters) {
+        return selectList(sql, parameters, false);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectList(String sql, Map<String, Object> parameters, boolean camelCase) {
         return execute(sql, parameters,
                 (statement -> {
                     List<Map<String, Object>> result = new ArrayList<>();
@@ -143,7 +150,12 @@ public class DefaultSqlRunner implements SqlRunner {
                     while (rs.next()) {
                         row = new HashMap<>(32);
                         for (int i = 1; i <= columnCount; i++) {
-                            row.put(md.getColumnName(i), rs.getObject(i));
+                            // 列名是否下划线转驼峰
+                            if (camelCase) {
+                                row.put(underlineToCamel(md.getColumnName(i)), rs.getObject(i));
+                            } else {
+                                row.put(md.getColumnName(i), rs.getObject(i));
+                            }
                         }
                         result.add(row);
                     }
@@ -167,6 +179,12 @@ public class DefaultSqlRunner implements SqlRunner {
     }
 
     @Override
+    public Map<String, Object> selectOne(String sql, Map<String, Object> parameters, boolean camelCase) {
+        List<Map<String, Object>> list = selectList(sql, parameters, camelCase);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public int insert(String sql, Map<String, Object> parameters) {
         return execute(sql, parameters, (PreparedStatement::executeUpdate));
     }
@@ -181,4 +199,16 @@ public class DefaultSqlRunner implements SqlRunner {
         return execute(sql, parameters, (PreparedStatement::executeUpdate));
     }
 
+    public static String underlineToCamel(String str) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        Pattern pattern = Pattern.compile("_(\\w)");
+        Matcher matcher = pattern.matcher(str);
+        StringBuffer result = new StringBuffer();
+        while (matcher.find())
+            matcher.appendReplacement(result, matcher.group(1).toUpperCase());
+        matcher.appendTail(result);
+        return result.toString();
+    }
 }
