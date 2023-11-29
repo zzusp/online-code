@@ -9,16 +9,21 @@ import java.util.Properties;
 @Configuration
 public class PageHelperConfig {
 
-    @Bean
-    public PageInterceptor pageInterceptor() {
-        PageInterceptor interceptor = new PageInterceptor();
+    @Bean(name = "pageProperties")
+    public Properties pageProperties() {
         Properties properties = new Properties();
         properties.setProperty("helperDialect", "mysql");
         properties.setProperty("reasonable", "true");
         properties.setProperty("supportMethodsArguments", "true");
         properties.setProperty("defaultCount", "true");
         properties.setProperty("params", "count=countsql");
-        interceptor.setProperties(properties);
+        return properties;
+    }
+
+    @Bean
+    public PageInterceptor pageInterceptor() {
+        PageInterceptor interceptor = new PageInterceptor();
+        interceptor.setProperties(pageProperties());
         return interceptor;
     }
 

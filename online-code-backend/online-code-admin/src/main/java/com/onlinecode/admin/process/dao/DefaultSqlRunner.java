@@ -1,13 +1,16 @@
 package com.onlinecode.admin.process.dao;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.parser.CountSqlParser;
+import com.onlinecode.admin.web.page.PageTable;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +19,11 @@ public class DefaultSqlRunner implements SqlRunner {
     private static final Logger log = LoggerFactory.getLogger(DefaultSqlRunner.class);
 
     private Connection connection;
+    private Properties pageProperties;
 
-    public DefaultSqlRunner(Connection connection) {
+    public DefaultSqlRunner(Connection connection, Properties pageProperties) {
         this.connection = connection;
+        this.pageProperties = pageProperties;
     }
 
     @Override
@@ -164,6 +169,38 @@ public class DefaultSqlRunner implements SqlRunner {
                     return result;
                 })
         );
+    }
+
+    @Override
+    public PageTable selectPage(String sql, int pageNum, int pageSize) {
+        Map<String, Object> parameters = new HashMap<>(4);
+        parameters.put("pageNum", pageNum);
+        parameters.put("pageSize", pageSize);
+        return selectPage(sql, parameters);
+    }
+
+    @Override
+    public PageTable selectPage(String sql, Map<String, Object> parameters) {
+        return selectPage(sql, parameters, false);
+    }
+
+    @Override
+    public PageTable selectPage(String sql, Map<String, Object> parameters, boolean camelCase) {
+        Integer pageNum = MapUtils.getInteger(parameters, "pageNum");
+        Integer pageSize = MapUtils.getInteger(parameters, "pageSize");
+        if (pageNum == null || pageNum < 1 || pageSize == null || pageSize < 1) {
+            return PageTable.empty();
+        }
+        String countSql = new CountSqlParser().getSimpleCountSql(sql);
+        PageHelper dialect = new PageHelper();
+        dialect.setProperties(pageProperties);
+        String pageSql = dialect.getPageSql(sql, new Page<>(pageNum, pageSize), new RowBounds(), null);
+        Map<String, Object> count = this.selectOne(countSql);
+        // 替换分页参数占位符为变量
+        pageSql = pageSql.replaceFirst("\\?", "#{pageNum}");
+        pageSql = pageSql.replaceFirst("\\?", "#{pageSize}");
+        List<Map<String, Object>> page = this.selectList(pageSql, parameters, camelCase);
+        return PageTable.page(Long.parseLong(count.get("count(0)").toString()), page);
     }
 
     @Override

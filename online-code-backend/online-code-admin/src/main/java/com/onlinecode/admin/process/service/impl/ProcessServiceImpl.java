@@ -6,6 +6,7 @@ import com.alibaba.compileflow.engine.process.preruntime.compiler.impl.BpmnFlowC
 import com.alibaba.compileflow.extension.executor.JavaExecutor;
 import com.alibaba.compileflow.extension.util.FlowUtils;
 import com.alibaba.compileflow.extension.util.VarUtils;
+import com.alibaba.fastjson2.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.PageInterceptor;
@@ -236,6 +237,9 @@ public class ProcessServiceImpl implements ProcessService {
         // code在bpm文件中定义
         BpmnStringProcessEngineImpl processEngine = BpmnProcessEngineFactory.getProcessEngine();
         SysProcess process = this.getByProcCode(code);
+        if (process == null) {
+            throw new BusinessException("未找到流程：" + code);
+        }
         Map<String, Object> flowVars = new HashMap<>(32);
         if (!CollectionUtils.isEmpty(process.getTasks())) {
             for (SysProcessTask task : process.getTasks()) {
@@ -367,15 +371,16 @@ public class ProcessServiceImpl implements ProcessService {
      */
     private SysProcess getByProcCode(String code) {
         // 先查缓存
-        SysProcess process = (SysProcess) redisTemplate.opsForValue().get(CACHE_KEY + code);
-        if (process != null) {
-            return process;
+        String cache = (String) redisTemplate.opsForValue().get(CACHE_KEY + code);
+        if (StringUtils.isNoneBlank(cache)) {
+            return JSONObject.parseObject(cache, SysProcess.class);
         }
+        SysProcess process;
         // 缓存未找到，查询数据库
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             process = sqlSession.getMapper(ProcessMapper.class).getByProcCode(code);
             if (process != null) {
-                process.setTasks(sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(process.getProcCode()));
+                process.setTasks(sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(code));
             }
         }
         // 分布式业务锁
@@ -390,7 +395,7 @@ public class ProcessServiceImpl implements ProcessService {
             if (process == null) {
                 redisTemplate.delete(CACHE_KEY + code);
             } else {
-                redisTemplate.opsForValue().setIfAbsent(CACHE_KEY + code, process, 1, TimeUnit.DAYS);
+                redisTemplate.opsForValue().setIfAbsent(CACHE_KEY + code, JSONObject.toJSONString(process), 1, TimeUnit.DAYS);
             }
         } catch (Exception e) {
             log.error("缓存流程失败，错误信息：{}", e.getMessage(), e);
