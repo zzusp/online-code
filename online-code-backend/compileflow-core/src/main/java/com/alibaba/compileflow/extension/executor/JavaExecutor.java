@@ -55,8 +55,8 @@ public class JavaExecutor {
         compiler.setFlowClassLoader(BpmnFlowClassLoader.getInstance());
         log.debug("开始编译");
         if (!compiler.compile()) {
-            log.debug("编译异常{}", compiler.getCompilerMessage());
-            throw new RuntimeException("编译异常{}" + compiler.getCompilerMessage());
+            log.debug("编译异常：\n{}", compiler.getCompilerMessage());
+            throw new RuntimeException("编译异常：\n" + compiler.getCompilerMessage());
         }
         log.debug("编译成功");
         log.debug("编译耗时：{}ms", compiler.getCompilerTakeTime());

@@ -62,7 +62,7 @@ const setProjectSchemaToDb = async (scenarioName: string) => {
         window.localStorage.removeItem(getLSName(scenarioName, 'packages'));
         Message.success('成功保存到数据库');
       } else {
-        Message.success('保存失败，错误信息：' + res.data.message);
+        Message.error('保存失败，错误信息：' + res.data.message);
       }
     })
     .catch((err: any) => {

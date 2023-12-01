@@ -161,6 +161,7 @@ public class ProcessServiceImpl implements ProcessService {
             redisTemplate.delete(CACHE_KEY + procCode);
         } catch (Exception e) {
             log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
+            throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
         } finally {
             lock.unlock();
         }

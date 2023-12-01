@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, Input, Nav, Shell, Box, Button, Card} from '@alifd/next';
+import {Form, Input, Nav, Shell, Box, Button, Card, Message} from '@alifd/next';
 import IceTitle from '@icedesign/title';
 
 import request from 'universal-request';
@@ -101,7 +101,9 @@ class BpmnDesign extends React.Component<any, any> {
       .then((res: any) => {
         console.log(res);
         if (res.status === 200 && res.data && res.data.code === 200) {
-
+          Message.success('成功保存到数据库');
+        } else {
+          Message.error('保存失败，错误信息：' + res.data.message);
         }
       })
       .catch((err: any) => {});
@@ -324,10 +326,6 @@ class BpmnDesign extends React.Component<any, any> {
     }
   }
 
-  back() {
-    window.history.go(-1);
-  }
-
   run() {
   }
 
@@ -354,7 +352,6 @@ class BpmnDesign extends React.Component<any, any> {
         <Shell.Action>
           <Box direction="row" spacing={10}>
             <Button type="primary" onClick={() => this.saveProcessInfo()}>保存</Button>
-            <Button type="normal" onClick={() => this.back()}>返回</Button>
           </Box>
         </Shell.Action>
 
