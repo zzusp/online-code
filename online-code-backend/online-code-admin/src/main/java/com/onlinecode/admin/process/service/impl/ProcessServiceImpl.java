@@ -121,6 +121,7 @@ public class ProcessServiceImpl implements ProcessService {
         if (StringUtils.isEmpty(procCode)) {
             throw new BusinessException("编码不可为空");
         }
+        JavaExecutor executor = new JavaExecutor();
         // 分布式业务锁
         RLock lock = redissonClient.getLock(LOCK_KEY + procCode);
         try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
@@ -147,6 +148,10 @@ public class ProcessServiceImpl implements ProcessService {
                 for (SysProcessTask task : process.getTasks()) {
                     if (task.getId() == null) {
                         task.setId(idGen.get("sys_process").getId());
+                    }
+                    // 编译检查
+                    if (StringUtils.isNoneBlank(task.getExecuteCmd())) {
+                        executor.compiler(task.getExecuteCmd());
                     }
                 }
                 sqlSession.getMapper(ProcessTaskMapper.class).batchInsert(process.getTasks());

@@ -43,14 +43,18 @@ public class SqlRunnerTest {
 //        // 测试报错自动回滚
 //        num = sqlRunner.update("UPDATE leaf_alloc SET step = #{step}, update_time = #{update_time} WHERE biz_tag = #{biz_tag}", updateData);
 
-//        Map<String, Object> vars = new HashMap<>(8);
+
+        Map<String, Object> vars = new HashMap<>(8);
+        vars.put("pageNum", 1);
+        vars.put("pageSize", 1);
+        vars.put("userName", "1323");
         String sql = "SELECT"
                 + " id, user_name, nick_name, email, avatar, password, locked, status, create_time, create_by, update_time, update_by"
                 + " FROM sys_user WHERE del_flag='0'";
 //        ;
-//        if (StringUtils.isNotEmpty(MapUtils.getString(vars, "userName"))) {
-//            sql += " AND user_name like concat(\"%\",#{userName},\"%\")";
-//        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(vars, "userName"))) {
+            sql += " AND user_name like concat(\"%\",#{userName},\"%\")";
+        }
 //        if (StringUtils.isNotEmpty(MapUtils.getString(vars, "nickName"))) {
 //            sql += " AND nick_name like concat(\"%\",#{nickName},\"%\")";
 //        }
@@ -62,7 +66,7 @@ public class SqlRunnerTest {
 //        sqlRunner.close();
 //        // 设置返回结果
 //        vars.put("flowRes", PageTable.page(pageInfo.getTotal(), pageInfo.getList()));
-        sqlRunner.selectPage(sql, 1, 10);
+        sqlRunner.selectPage(sql, vars, true);
 //        sqlRunner.commit();
 //        sqlRunner.close();
 

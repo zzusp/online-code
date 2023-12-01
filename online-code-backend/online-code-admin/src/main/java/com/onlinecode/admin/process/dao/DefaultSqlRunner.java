@@ -195,7 +195,7 @@ public class DefaultSqlRunner implements SqlRunner {
         PageHelper dialect = new PageHelper();
         dialect.setProperties(pageProperties);
         String pageSql = dialect.getPageSql(sql, new Page<>(pageNum, pageSize), new RowBounds(), null);
-        Map<String, Object> count = this.selectOne(countSql);
+        Map<String, Object> count = this.selectOne(countSql, parameters);
         // 替换分页参数占位符为变量
         pageSql = pageSql.replaceFirst("\\?", "#{pageNum}");
         pageSql = pageSql.replaceFirst("\\?", "#{pageSize}");

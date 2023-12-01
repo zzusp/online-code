@@ -33,6 +33,7 @@
     "@alilc/lowcode-setter-title": "^1.0.2",
     "@icedesign/title": "^1.0.5",
     "antd": "^4.21.4",
+    "bcryptjs": "^2.4.3",
     "bpmn-js": "^13.2.2",
     "bpmn-js-properties-panel": "^3.0.0",
     "moment": "^2.29.3",

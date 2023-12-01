@@ -11,6 +11,8 @@ import {
   getPackagesFromAssets
 } from '../../services/schemaService';
 import { useNavigate } from "react-router-dom";
+const bcrypt = require('bcryptjs');
+import { Base64 } from 'js-base64';
 
 const Renderer = (props) => {
 
@@ -67,6 +69,8 @@ const Renderer = (props) => {
     });
 
     appHelper.utils.navigate = (path: string, options?: any) => { navigate(path, options) };
+    appHelper.utils.getBcrypt = () => { return bcrypt };
+    appHelper.utils.getBase64 = () => { return Base64 };
   }
 
   const {schema, components, i18n = {}, projectDataSource = {}} = data as any;

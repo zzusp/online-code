@@ -41,21 +41,26 @@ public class JavaExecutor {
     }
 
     public Object execute(String code, Map<String, Object> vars) {
-        JavaStringCompiler compiler = new JavaStringCompiler(code);
-        compiler.setFlowClassLoader(BpmnFlowClassLoader.getInstance());
-        log.debug("开始编译");
-        if (!compiler.compile()) {
-            log.debug("编译异常{}", compiler.getCompilerMessage());
-            return vars;
-        }
-        log.debug("编译成功");
-        log.debug("编译耗时：{}ms", compiler.getCompilerTakeTime());
+        JavaStringCompiler compiler = compiler(code);
         log.debug("开始运行");
         long startTime = System.currentTimeMillis();
         Object result = ((AbstractJavaCmd) compiler.getClassInstance()).execute(vars);
         log.debug("运行成功");
         log.debug("运行耗时：{}ms", System.currentTimeMillis() - startTime);
         return result;
+    }
+
+    public JavaStringCompiler compiler(String code) {
+        JavaStringCompiler compiler = new JavaStringCompiler(code);
+        compiler.setFlowClassLoader(BpmnFlowClassLoader.getInstance());
+        log.debug("开始编译");
+        if (!compiler.compile()) {
+            log.debug("编译异常{}", compiler.getCompilerMessage());
+            throw new RuntimeException("编译异常{}" + compiler.getCompilerMessage());
+        }
+        log.debug("编译成功");
+        log.debug("编译耗时：{}ms", compiler.getCompilerTakeTime());
+        return compiler;
     }
 
 }
