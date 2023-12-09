@@ -73,6 +73,26 @@
         "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/build/lowcode/view.js",
         "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/build/lowcode/view.css"
       ]
+    },
+    {
+      "package": "plugin-custom-renderer",
+      "version": "0.1.0",
+      "library": "BizComp",
+      "urls": [
+        "./lowcode/render/default/view.js",
+        "./lowcode/render/default/view.css"
+      ],
+      "editUrls": [
+        "./lowcode/view.js",
+        "./lowcode/view.css"
+      ],
+      "advancedUrls": {
+        "default": [
+          "./lowcode/render/default/view.js",
+          "./lowcode/render/default/view.css"
+        ]
+      },
+      "advancedEditUrls": {}
     }
   ],
   "components": [
@@ -107,6 +127,22 @@
       "urls": {
         "default": "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/build/lowcode/meta.js",
         "design": "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/build/lowcode/meta.design.js"
+      }
+    },
+    {
+      "exportName": "PluginCustomRendererMeta",
+      "npm": {
+        "package": "plugin-custom-renderer",
+        "version": "0.1.0"
+      },
+      "url": "./lowcode/meta.js",
+      "urls": {
+        "default": "./lowcode/meta.js"
+      },
+      "advancedUrls": {
+        "default": [
+          "./lowcode/meta.js"
+        ]
       }
     }
   ],

@@ -10,9 +10,10 @@ import {
   getProjectSchemaFromDb,
   getPackagesFromAssets
 } from '../../services/schemaService';
-import { useNavigate } from "react-router-dom";
+import {RouterProvider, useNavigate} from "react-router-dom";
 const bcrypt = require('bcryptjs');
 import { Base64 } from 'js-base64';
+import ReactDOM from "react-dom";
 
 const Renderer = (props) => {
 
@@ -21,7 +22,6 @@ const Renderer = (props) => {
   console.log(page);
 
   const [data, setData] = useState({});
-  const navigate = useNavigate();
 
   useEffect(() => {
     setData({});
@@ -68,9 +68,6 @@ const Renderer = (props) => {
       projectDataSource,
     });
 
-    appHelper.utils.navigate = (path: string, options?: any) => { navigate(path, options) };
-    appHelper.utils.getBcrypt = () => { return bcrypt };
-    appHelper.utils.getBase64 = () => { return Base64 };
   }
 
   const {schema, components, i18n = {}, projectDataSource = {}} = data as any;
@@ -96,7 +93,7 @@ const Renderer = (props) => {
       />
       }
     </div>
-  )
+  );
 
 };
 

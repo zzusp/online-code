@@ -197,7 +197,9 @@ public class DefaultSqlRunner implements SqlRunner {
         String pageSql = dialect.getPageSql(sql, new Page<>(pageNum, pageSize), new RowBounds(), null);
         Map<String, Object> count = this.selectOne(countSql, parameters);
         // 替换分页参数占位符为变量
-        pageSql = pageSql.replaceFirst("\\?", "#{pageNum}");
+        if (pageSql.split("\\?").length == 3) {
+            pageSql = pageSql.replaceFirst("\\?", "#{pageNum}");
+        }
         pageSql = pageSql.replaceFirst("\\?", "#{pageSize}");
         List<Map<String, Object>> page = this.selectList(pageSql, parameters, camelCase);
         return PageTable.page(Long.parseLong(count.get("count(0)").toString()), page);

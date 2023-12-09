@@ -4,14 +4,27 @@ import { default as Renderer } from './renderer';
 import request from 'universal-request';
 
 import {
-  Link,
+  Link, useNavigate,
   useParams,
 } from "react-router-dom";
+import appHelper from "../../appHelper";
+const bcrypt = require('bcryptjs');
+import { Base64 } from 'js-base64';
+import ReactDOM from "react-dom";
 
 const Pages = () => {
 
   const { page: currentPage = 'login' } = useParams();
   const [ menu, setMenu ] = useState([] as React.JSX.Element[]);
+
+  const navigate = useNavigate();
+
+  appHelper.utils.navigate = (path: string, options?: any) => { navigate(path, options) };
+  appHelper.utils.getBcrypt = () => { return bcrypt };
+  appHelper.utils.getBase64 = () => { return Base64 };
+  appHelper.utils.renderer = (page) => {
+    return <Renderer page={page} />
+  };
 
   useEffect(() => {
     console.log("page change");
