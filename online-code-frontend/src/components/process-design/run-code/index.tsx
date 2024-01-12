@@ -1,12 +1,10 @@
 import React, { useRef } from 'react';
 
 import {Form, Input, Nav, Shell, Box, Button, ResponsiveGrid, Radio, Card} from '@alifd/next';
-const { Cell } = ResponsiveGrid
 import IceTitle from '@icedesign/title';
 import { JsonView, allExpanded, darkStyles, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
-
-import request from 'universal-request';
+import {createFetch} from "../../../fetchHandler";
 
 class RunCode extends React.Component<any, any> {
 
@@ -21,7 +19,7 @@ class RunCode extends React.Component<any, any> {
       cmd: this.props?.code,
       vars: JSON.parse(this.state.inputVal)
     }
-    await request({url: '/onlinecode-api/process/runCmd', method: 'POST', data: param})
+    await createFetch({url: '/onlinecode-api/process/runCmd', method: 'POST', data: param})
       .then((res: any) => {
         console.log(res);
         if (res.status === 200 && res.data) {

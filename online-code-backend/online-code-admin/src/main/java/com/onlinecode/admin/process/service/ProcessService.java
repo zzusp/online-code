@@ -5,6 +5,7 @@ import com.onlinecode.admin.web.R;
 import com.onlinecode.admin.web.page.PageParam;
 import com.onlinecode.admin.web.page.PageTable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +20,13 @@ public interface ProcessService {
      * 分页查询
      */
     R<PageTable> list(PageParam<SysProcess> pageParam);
+
+    /**
+     * 查询所有流程信息
+     *
+     * @return 所有流程信息
+     */
+    List<SysProcess> listAll();
 
     /**
      * 根据id查询流程信息

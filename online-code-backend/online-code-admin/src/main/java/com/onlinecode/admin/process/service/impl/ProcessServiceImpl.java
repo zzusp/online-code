@@ -98,6 +98,13 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
+    public List<SysProcess> listAll() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+            return sqlSession.getMapper(ProcessMapper.class).getAllProcess(null, null, null);
+        }
+    }
+
+    @Override
     public SysProcess getById(long id) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             return sqlSession.getMapper(ProcessMapper.class).getById(id);

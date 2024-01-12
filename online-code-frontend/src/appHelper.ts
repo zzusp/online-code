@@ -1,8 +1,10 @@
-import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler';
+// import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler';
+
+import {createFetchHandler} from "./fetchHandler";
 
 const appHelper = {
   requestHandlersMap: {
-    fetch: createFetchHandler()
+    fetch: createFetchHandler(),
   },
   utils: {
     demoUtil: (...params: any[]) => { console.log(`this is a demoUtil with params ${params}`) },
@@ -16,4 +18,6 @@ const appHelper = {
     ConstantB: 'ConstantB'
   }
 };
+
+
 export default appHelper;

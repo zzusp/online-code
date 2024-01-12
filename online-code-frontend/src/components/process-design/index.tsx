@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Form, Input, Nav, Shell, Box, Button, Card, Message} from '@alifd/next';
 import IceTitle from '@icedesign/title';
 
-import request from 'universal-request';
 import { AsObject } from 'universal-request/lib/types';
 // 引入相关的依赖
 import EventBus from "./bpmn/utils/event-bus.js";
@@ -29,6 +28,7 @@ import './property-panel.css';
 import {useParams} from "react-router-dom";
 import CodeEditor from "./editor";
 import RunCode from "./run-code";
+import {createFetch} from "../../fetchHandler";
 
 class BpmnDesign extends React.Component<any, any> {
 
@@ -63,7 +63,7 @@ class BpmnDesign extends React.Component<any, any> {
   }
 
   async getProcessInfo(procId: any) {
-    await request({url: '/onlinecode-api/process/getInfoWithTaskById?id=' + procId, method: 'GET'})
+    await createFetch({url: '/onlinecode-api/process/getInfoWithTaskById?id=' + procId, method: 'GET'})
       .then((res: any) => {
         if (res.status === 200 && res.data && res.data.code === 200) {
           const proc = res.data.data;
@@ -97,7 +97,7 @@ class BpmnDesign extends React.Component<any, any> {
     proc.bpmn = this.state.bpmnStr;
     proc.tasks = tasks;
     console.log(proc);
-    await request({url: '/onlinecode-api/process/save', method: 'POST', data: proc as AsObject})
+    await createFetch({url: '/onlinecode-api/process/save', method: 'POST', data: proc as AsObject})
       .then((res: any) => {
         console.log(res);
         if (res.status === 200 && res.data && res.data.code === 200) {

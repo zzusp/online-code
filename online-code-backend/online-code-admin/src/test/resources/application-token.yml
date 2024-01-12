@@ -1,0 +1,43 @@
+############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: satoken
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: 3600
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: true
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+  # 配置 Sa-Token 单独使用的 Redis 连接
+  alone-redis:
+    # 普通集群
+    pattern: cluster
+    # 集群只是用db0
+    database: 0
+    # Redis服务器连接用户名（默认为空）
+    username:
+    # Redis服务器连接密码（默认为空）
+    password: V6ZuPvR1M2UA
+    # 连接超时时间（毫秒）
+    timeout: 3000
+    cluster:
+      # Redis集群服务器节点地址
+      nodes: 124.222.119.198:6379,124.222.119.198:6380,124.222.119.198:6381,124.222.119.198:6382,124.222.119.198:6383,124.222.119.198:6384
+      # 最大重定向次数
+      maxRedirects: 5
+    lettuce:
+      pool:
+        # Redis连接池在给定时间可以分配的最大连接数。使用负值无限制
+        max-active: 2000
+        # 连接分配在池被耗尽时抛出异常之前应该阻塞的最长时间量(以毫秒为单位)。使用负值可以无限期地阻止
+        max-wait: 1000
+        #  连接池中的最大空闲连接
+        max-idle: 500
+        # 目标为保持在池中的最小空闲连接数。这个设置只有在设置max-idle的情况下才有效果
+        min-idle: 5

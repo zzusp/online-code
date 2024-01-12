@@ -1,5 +1,5 @@
 import { init, plugins } from '@alilc/lowcode-engine';
-import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler'
+// import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler'
 import EditorInitPlugin from './plugins/plugin-editor-init';
 import UndoRedoPlugin from '@alilc/lowcode-plugin-undo-redo';
 import ZhEnPlugin from '@alilc/lowcode-plugin-zh-en';
@@ -25,6 +25,7 @@ import './global.scss';
 
 // 自定义插件
 import PagesPlugin from './plugins/plugin-pages';
+import {createFetchHandler} from "./fetchHandler";
 
 async function registerPlugins() {
   await plugins.register(InjectPlugin);

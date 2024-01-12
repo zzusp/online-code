@@ -3,7 +3,6 @@ import {Message} from '@alifd/next';
 import {IPublicEnumTransformStage, IPublicTypeProjectSchema} from '@alilc/lowcode-types';
 import DefaultPageSchema from './defaultPageSchema.json';
 import DefaultI18nSchema from './defaultI18nSchema.json';
-import request from 'universal-request';
 import {
   generateProjectSchema,
   getLSName,
@@ -11,6 +10,7 @@ import {
 } from "./mockService";
 import { injectAssets, filterPackages } from '@alilc/lowcode-plugin-inject';
 import assets from '../services/assets.json';
+import {createFetch} from "../fetchHandler";
 
 export const saveSchema = async (scenarioName: string = 'unknown') => {
   console.log('save', scenarioName);
@@ -31,7 +31,7 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
       code: scenarioName
     }
   }
-  await request({url: '/onlinecode-api/process/run', method: 'POST', data: data})
+  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: data})
     .then((res: any) => {
       if (res.status === 200 && res.data && res.data.code === 200 && res.data.data) {
         schema = JSON.parse(res.data.data.schema_json);

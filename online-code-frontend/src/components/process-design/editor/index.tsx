@@ -12,6 +12,7 @@ class CodeEditor extends React.Component<any, any> {
         defaultValue={this.props?.code}
         supportFullScreen={true}
         onChange={this.props.codeChange}
+        options={{ occurrences: true, selectOnLineNumbers: true }}
         // onMount={this.handleEditorDidMount}
       />
     );
