@@ -1,5 +1,6 @@
 package com.alibaba.compileflow.extension.core;
 
+import com.alibaba.compileflow.extension.exception.CompilerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,9 +105,8 @@ public class JavaStringCompiler {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException
                 | ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            throw new CompilerException("编译异常，错误信息：" + e.getMessage(), e.getCause());
         }
-        return null;
     }
 
     /**

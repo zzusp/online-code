@@ -302,7 +302,7 @@ public class ProcessServiceImpl implements ProcessService {
         try {
             return executor.execute(cmd, params);
         } catch (Exception e) {
-            throw new BusinessException("节点执行失败，错误信息" + e.getMessage(), e.getCause());
+            throw new BusinessException("节点执行失败，错误信息：" + e.getMessage(), e.getCause());
         }
     }
 

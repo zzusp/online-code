@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,7 +62,8 @@ public class SqlRunnerTest {
 //        // 分页
 //        PageHelper.startPage((int) vars.getOrDefault("pageNum", 1), (int) vars.getOrDefault("pageSize", 0));
 //        // 查询
-//        List<Map<String, Object>> list = sqlRunner.selectList(sql, vars, true);
+        List<Map<String, Object>> list = sqlRunner.selectList(sql, vars, true);
+        Map<String, Long> procMap =  list.stream().map(v -> v.get("menu_code").toString()).collect(Collectors.groupingBy(v -> v, Collectors.counting()));
 //        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(list);
 //        sqlRunner.close();
 //        // 设置返回结果

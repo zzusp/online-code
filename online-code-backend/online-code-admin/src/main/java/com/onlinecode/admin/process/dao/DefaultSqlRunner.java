@@ -3,6 +3,7 @@ package com.onlinecode.admin.process.dao;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.parser.CountSqlParser;
+import com.onlinecode.admin.exception.SQLErrorException;
 import com.onlinecode.admin.web.page.PageTable;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -119,9 +120,9 @@ public class DefaultSqlRunner implements SqlRunner {
             // 执行sql
             rs = function.apply(statement);
         } catch (Exception e) {
-            e.printStackTrace();
             // 提交失败，回滚事务
             rollback();
+            throw new SQLErrorException("SQL执行失败，错误信息：" + e.getMessage(), e.getCause());
         } finally {
             // 自动提交事务时，需要自动关闭
             if (autoCommit) {

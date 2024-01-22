@@ -54,7 +54,7 @@ const setProjectSchemaToDb = async (scenarioName: string) => {
       schema: JSON.stringify(project.exportSchema(IPublicEnumTransformStage.Save))
     }
   }
-  await request({url: '/onlinecode-api/process/run', method: 'POST', data: data})
+  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: data})
     .then((res: any) => {
       if (res.status === 200 && res.data && res.data.code === 200) {
         // 删除浏览器本地缓存中的内容

@@ -9,7 +9,7 @@ import {createFetch} from "../../../fetchHandler";
 class RunCode extends React.Component<any, any> {
 
   state = {
-    inputVal: '',
+    inputVal: '{}',
     outputVal: ''
   }
 

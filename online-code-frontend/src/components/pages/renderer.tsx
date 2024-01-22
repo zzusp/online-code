@@ -10,10 +10,6 @@ import {
   getProjectSchemaFromDb,
   getPackagesFromAssets
 } from '../../services/schemaService';
-import {RouterProvider, useNavigate} from "react-router-dom";
-const bcrypt = require('bcryptjs');
-import { Base64 } from 'js-base64';
-import ReactDOM from "react-dom";
 
 const Renderer = (props) => {
 
