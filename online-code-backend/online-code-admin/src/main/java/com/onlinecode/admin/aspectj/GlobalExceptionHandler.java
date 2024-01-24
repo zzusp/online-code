@@ -1,6 +1,7 @@
 package com.onlinecode.admin.aspectj;
 
 import com.alibaba.compileflow.extension.exception.CompilerException;
+import com.alibaba.compileflow.extension.exception.RunCmdException;
 import com.onlinecode.admin.exception.BusinessException;
 import com.onlinecode.admin.exception.SQLErrorException;
 import com.onlinecode.admin.web.R;
@@ -28,6 +29,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = CompilerException.class)
     public R<Object> handleCompilerException(CompilerException e) {
+        log.error(e.getMessage(), e);
+        return R.error(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 代码执行异常
+     */
+    @ExceptionHandler(value = RunCmdException.class)
+    public R<Object> handleRumCmdException(RunCmdException e) {
         log.error(e.getMessage(), e);
         return R.error(e.getCode(), e.getMessage());
     }

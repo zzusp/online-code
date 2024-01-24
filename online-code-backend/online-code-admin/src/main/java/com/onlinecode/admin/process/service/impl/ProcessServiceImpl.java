@@ -295,15 +295,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public Object runCmd(String cmd, Map<String, Object> params) {
-        if (StringUtils.isBlank(cmd)) {
-            throw new BusinessException("代码不可为空");
-        }
-        JavaExecutor executor = new JavaExecutor();
-        try {
-            return executor.execute(cmd, params);
-        } catch (Exception e) {
-            throw new BusinessException("节点执行失败，错误信息：" + e.getMessage(), e.getCause());
-        }
+        return new JavaExecutor().execute(cmd, params);
     }
 
     @Override

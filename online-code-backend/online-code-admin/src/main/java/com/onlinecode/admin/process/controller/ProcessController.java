@@ -6,6 +6,8 @@ import com.onlinecode.admin.process.service.ProcessService;
 import com.onlinecode.admin.web.R;
 import com.onlinecode.admin.web.page.PageParam;
 import com.onlinecode.admin.web.page.PageTable;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -63,7 +65,14 @@ public class ProcessController {
 
     @PostMapping("/runCmd")
     public R<Object> runCmd(@RequestBody RunParam param) {
-        return R.ok(processService.runCmd(param.getCmd(), param.getVars()));
+        if (StringUtils.isBlank(param.getCmd())) {
+            return R.error("代码不可为空");
+        }
+        try {
+            return R.ok(processService.runCmd(param.getCmd(), param.getVars()));
+        } catch (Exception e) {
+            return R.error("节点执行失败，错误信息：\n" + ExceptionUtils.getStackTrace(e));
+        }
     }
 
     @GetMapping("/autocomplete")
