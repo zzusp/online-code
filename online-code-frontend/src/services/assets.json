@@ -4,7 +4,7 @@
       "package": "moment",
       "version": "2.24.0",
       "urls": [
-        "https://g.alicdn.com/mylib/moment/2.24.0/min/moment.min.js"
+        "./js/moment.min.js"
       ],
       "library": "moment"
     },
@@ -12,7 +12,7 @@
       "package": "lodash",
       "library": "_",
       "urls": [
-        "https://g.alicdn.com/platform/c/lodash/4.6.1/lodash.min.js"
+        "./js/lodash.min.js"
       ]
     },
     {
@@ -20,8 +20,8 @@
       "package": "@alifd/next",
       "version": "1.26.4",
       "urls": [
-        "https://g.alicdn.com/code/lib/alifd__next/1.26.4/next.min.css",
-        "https://g.alicdn.com/code/lib/alifd__next/1.26.4/next-with-locales.min.js"
+        "./css/next.min.css",
+        "./js/next-with-locales.min.js"
       ],
       "library": "Next"
     },
@@ -30,8 +30,8 @@
       "package": "NextTable",
       "version": "1.0.1",
       "urls": [
-        "https://g.alicdn.com/fusion-platform/pro-table/1.0.1/next-table.js",
-        "https://g.alicdn.com/fusion-platform/pro-table/1.0.1/next-table.css"
+        "./js/next-table.js",
+        "./css/next-table.css"
       ],
       "library": "NextTable"
     },
@@ -40,8 +40,8 @@
       "version": "1.0.7",
       "library": "AlilcLowcodeMaterials",
       "urls": [
-        "https://alifd.alicdn.com/npm/@alilc/lowcode-materials@1.0.7/dist/AlilcLowcodeMaterials.js",
-        "https://alifd.alicdn.com/npm/@alilc/lowcode-materials@1.0.7/dist/AlilcLowcodeMaterials.css"
+        "./js/AlilcLowcodeMaterials.js",
+        "./css/AlilcLowcodeMaterials.css"
       ],
       "editUrls": [
         "https://alifd.alicdn.com/npm/@alilc/lowcode-materials@1.0.7/build/lowcode/view.js",
@@ -53,8 +53,8 @@
       "version": "2.0.7",
       "library": "AlifdLayout",
       "urls": [
-        "https://alifd.alicdn.com/npm/@alifd/layout@2.0.7/dist/AlifdLayout.js",
-        "https://alifd.alicdn.com/npm/@alifd/layout@2.0.7/dist/AlifdLayout.css"
+        "./js/AlifdLayout.js",
+        "./css/AlifdLayout.css"
       ],
       "editUrls": [
         "https://alifd.alicdn.com/npm/@alifd/layout@2.0.7/build/lowcode/view.js",
@@ -66,8 +66,8 @@
       "version": "2.0.0",
       "library": "AlifdFusionUi",
       "urls": [
-        "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/dist/AlifdFusionUi.js",
-        "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/dist/AlifdFusionUi.css"
+        "./js/AlifdFusionUi.js",
+        "./css/AlifdFusionUi.css"
       ],
       "editUrls": [
         "https://alifd.alicdn.com/npm/@alifd/fusion-ui@2.0.0/build/lowcode/view.js",
