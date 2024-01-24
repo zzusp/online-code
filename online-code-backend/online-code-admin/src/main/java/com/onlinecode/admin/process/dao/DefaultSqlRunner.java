@@ -158,9 +158,9 @@ public class DefaultSqlRunner implements SqlRunner {
                         for (int i = 1; i <= columnCount; i++) {
                             // 列名是否下划线转驼峰
                             if (camelCase) {
-                                row.put(underlineToCamel(md.getColumnName(i)), rs.getObject(i));
+                                row.put(underlineToCamel(md.getColumnLabel(i)), rs.getObject(i));
                             } else {
-                                row.put(md.getColumnName(i), rs.getObject(i));
+                                row.put(md.getColumnLabel(i), rs.getObject(i));
                             }
                         }
                         result.add(row);
@@ -190,6 +190,7 @@ public class DefaultSqlRunner implements SqlRunner {
         Integer pageNum = MapUtils.getInteger(parameters, "pageNum");
         Integer pageSize = MapUtils.getInteger(parameters, "pageSize");
         if (pageNum == null || pageNum < 1 || pageSize == null || pageSize < 1) {
+            log.warn("Please set page param first");
             return PageTable.empty();
         }
         String countSql = new CountSqlParser().getSimpleCountSql(sql);
