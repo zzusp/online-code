@@ -47,7 +47,7 @@ const Pages = () => {
         if (res.status === 200 && res.data && res.data.code === 200) {
           const menus = res.data.data;
           setMenu(toNav(menus));
-          console.log(toNav(menus));
+          // console.log(toNav(menus));
         }
       })
       .catch((err: any) => {});
@@ -63,15 +63,17 @@ const Pages = () => {
       if (m.type === '0') {
         arr.push(<Nav.SubNav label={m.name}>{toNav(m.children)}</Nav.SubNav>);
       } else if (m.type === '1') { // 菜单
+        let icon = <Icon type={m.icon} style={{marginRight: '8px'}} size={'small'}/>;
+        // let icon = m.icon;
         if (m.mode === '0') { // schema
-          arr.push(<Nav.Item key={m.code}><Link to={`/pages/` + m.code}>{m.name}</Link></Nav.Item>);
+          arr.push(<Nav.Item icon={icon} key={m.code}><Link to={`/pages/` + m.code}>{m.name}</Link></Nav.Item>);
         } else if (m.mode === '1') { // react
-          arr.push(<Nav.Item key={m.code}><Link to={m.url}>{m.name}</Link></Nav.Item>);
+          arr.push(<Nav.Item icon={icon} key={m.code}><Link to={m.url}>{m.name}</Link></Nav.Item>);
         } else if (m.mode === '2') { // iframe
           if (m.new_tab === '1') { // 新标签页
-            arr.push(<Nav.Item key={m.code}><a href={m.url} target='_blank'>{m.name}</a></Nav.Item>);
+            arr.push(<Nav.Item icon={icon} key={m.code}><a href={m.url} target='_blank'>{m.name}</a></Nav.Item>);
           } else {
-            arr.push(<Nav.Item key={m.code}><a href={m.url}>{m.name}</a></Nav.Item>);
+            arr.push(<Nav.Item icon={icon} key={m.code}><a href={m.url}>{m.name}</a></Nav.Item>);
           }
         }
       }
