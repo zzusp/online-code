@@ -18,6 +18,12 @@
   min-height: auto !important;
 }
 
+.fusion-ui-pro-table-content .next-overlay-wrapper {
+  position: absolute !important;
+  z-index: 1000;
+  right: 0;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

@@ -84,7 +84,9 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public R<PageTable> list(PageParam<SysProcess> pageParam) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-            PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+            if (pageParam.getPageNum() > 0 && pageParam.getPageSize() > 0) {
+                PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+            }
             if (pageParam.getParam() == null) {
                 pageParam.setParam(new SysProcess());
             }

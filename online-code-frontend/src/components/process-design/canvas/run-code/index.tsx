@@ -4,7 +4,7 @@ import {Form, Input, Nav, Shell, Box, Button, ResponsiveGrid, Radio, Card} from 
 import IceTitle from '@icedesign/title';
 import { JsonView, allExpanded, darkStyles, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
-import {createFetch} from "../../../fetchHandler";
+import {createFetch} from "../../../../fetchHandler";
 
 class RunCode extends React.Component<any, any> {
 

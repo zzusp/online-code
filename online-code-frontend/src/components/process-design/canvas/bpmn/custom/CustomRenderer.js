@@ -16,7 +16,6 @@ export default function CustomRenderer(eventBus, textRenderer, elementRegistry, 
 
   this.drawCustomElements = function (parentNode, element) {
     console.log(element)
-    const rootId = element.parent.businessObject.id;
     // 获取到类型
     const type = element.type;
     if (type !== 'label') {
@@ -45,13 +44,16 @@ export default function CustomRenderer(eventBus, textRenderer, elementRegistry, 
           const labelDimensions = textRenderer.getExternalLabelBounds({width: 90, height: 20}, getLabel(element));
           let label = elementRegistry.get(element.businessObject.id + '_label');
 
-          if (!label && type === 'bpmn:Task') {
-            this.createLabel(element, labelDimensions, rootId);
-          } else if (label && type !== 'bpmn:Task') {
-            // 先删除
-            canvas.removeShape(element.businessObject.id + '_label');
-            element.labels.remove(element.labels['0']);
-            this.createLabel(element, labelDimensions, rootId);
+          if (element.parent) {
+            const rootId = element.parent.businessObject.id;
+            if (!label && type === 'bpmn:Task') {
+              this.createLabel(element, labelDimensions, rootId);
+            } else if (label && type !== 'bpmn:Task') {
+              // 先删除
+              canvas.removeShape(element.businessObject.id + '_label');
+              element.labels.remove(element.labels['0']);
+              this.createLabel(element, labelDimensions, rootId);
+            }
           }
         }
         return customIcon;
