@@ -35,6 +35,7 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
     .then((res: any) => {
       if (res.status === 200 && res.data && res.data.code === 200 && res.data.data) {
         schema = JSON.parse(res.data.data.schema_json);
+        window.localStorage.setItem(getLSName(scenarioName), res.data.data.schema_json);
       }
     })
     .catch((err: any) => {
@@ -47,11 +48,14 @@ const setProjectSchemaToDb = async (scenarioName: string) => {
     console.error('scenarioName is required!');
     return;
   }
+
+  const schema = JSON.stringify(project.exportSchema(IPublicEnumTransformStage.Save));
+
   let data: any = {
     procCode: 'menuSaveSchema',
     vars: {
       code: scenarioName,
-      schema: JSON.stringify(project.exportSchema(IPublicEnumTransformStage.Save))
+      schema: schema
     }
   }
   await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: data})

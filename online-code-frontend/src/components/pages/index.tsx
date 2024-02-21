@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Nav, Shell, Dropdown, Menu, Icon } from '@alifd/next';
+import {Nav, Shell, Dropdown, Menu, Icon, Message, Divider} from '@alifd/next';
 import { default as Renderer } from './renderer';
 
 import {
@@ -10,6 +10,7 @@ import appHelper from "../../appHelper";
 const bcrypt = require('bcryptjs');
 import { Base64 } from 'js-base64';
 import {createFetch} from "../../fetchHandler";
+import {getLSName} from "../../services/mockService";
 
 const Pages = () => {
 
@@ -21,6 +22,7 @@ const Pages = () => {
   appHelper.utils.navigate = (path: string, options?: any) => { navigate(path, options) };
   appHelper.utils.getBcrypt = () => { return bcrypt };
   appHelper.utils.getBase64 = () => { return Base64 };
+  appHelper.utils.getMessage = () => { return Message };
   appHelper.utils.renderer = (page) => {
     return <Renderer page={page} />
   };
@@ -81,6 +83,11 @@ const Pages = () => {
     return arr;
   }
 
+  function clearCache() {
+    // 删除浏览器本地缓存中的内容
+    window.localStorage.clear();
+  }
+
   async function logout() {
     await createFetch({url: '/onlinecode-api/logout', method: 'GET'})
       .then((res: any) => {})
@@ -104,6 +111,7 @@ const Pages = () => {
         </Shell.Branding>
         <Shell.Navigation direction="hoz">
         </Shell.Navigation>
+
         <Shell.Action>
           <Dropdown trigger={
             <div style={{
@@ -124,12 +132,17 @@ const Pages = () => {
               />
               <span style={{ marginLeft: 10 }}>MyName</span>
             </div>
-          } triggerType="click">
+          } triggerType="click" align="tl bl">
             <Menu>
-              <Menu.Item onClick={() => logout()}><Icon type="exit" style={{marginRight: '1em'}} />Logout</Menu.Item>
+              <Menu.Item onClick={() => clearCache()}>
+                <span style={{float: 'right'}}>清理缓存</span>
+              </Menu.Item>
+              <Divider key="divider" style={{margin: '2px 0'}} />
+              <Menu.Item onClick={() => logout()}>
+                <span style={{float: 'right'}}><Icon size="small" type="exit" style={{marginRight: '1em'}} />Logout</span>
+              </Menu.Item>
             </Menu>
           </Dropdown>
-
         </Shell.Action>
 
         <Shell.Navigation>

@@ -15,8 +15,6 @@ const Renderer = (props) => {
 
   const {page} = props;
 
-  console.log(page);
-
   const [data, setData] = useState({});
 
   useEffect(() => {
@@ -25,8 +23,11 @@ const Renderer = (props) => {
   }, [page])
 
   async function init() {
+    console.log('Renderer Page ' + page);
+
     const projectSchema = await getProjectSchemaFromDb(page);
     const packages = await getPackagesFromAssets();
+    setData({});
     const {
       componentsMap: componentsMapArray,
       componentsTree,
@@ -67,6 +68,12 @@ const Renderer = (props) => {
   }
 
   const {schema, components, i18n = {}, projectDataSource = {}} = data as any;
+
+  if (!schema) {
+    return <Loading fullScreen tip={<span style={{color: '#5584ff'}}>Loading...</span>}>
+      <div className="lowcode-plugin-sample-preview" style={{ minHeight : '90vh' }}></div>
+    </Loading>;
+  }
 
   function customizer(objValue: [], srcValue: []) {
     if (isArray(objValue)) {
