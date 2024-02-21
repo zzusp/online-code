@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 public class DefaultSqlRunner implements SqlRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultSqlRunner.class);
+    private static final Pattern SEPARATOR_PATTERN = Pattern.compile("separator=\"(.*?)\"");
+    private static final Pattern COLLECTION_PATTERN = Pattern.compile("collection=\"(.*?)\"");
 
     private Connection connection;
     private Properties pageProperties;
@@ -58,17 +60,100 @@ public class DefaultSqlRunner implements SqlRunner {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <E> E execute(String sql, Map<String, Object> parameters, StatementHolder<PreparedStatement, E> function) {
-        List<String> list = new ArrayList<>();
+        Object[] arr = new Object[0];
+        if (parameters != null && !parameters.isEmpty()) {
+            Map<String, Object> runParameters = new HashMap<>(parameters);
+            List<String> list = new ArrayList<>();
+            sql = matchForeach(sql, runParameters);
+            sql = matchKey(sql, list);
+            arr = matchParameter(list, runParameters);
+        }
+        return execute(sql, arr, function);
+    }
+
+    private String matchKey(String sql, List<String> list) {
         // 变量替换成?
         int startIndex = sql.indexOf("#{");
-        while (startIndex > 0) {
+        while (startIndex >= 0) {
             int endIndex = sql.indexOf("}", startIndex);
             list.add(sql.substring(startIndex + 2, endIndex));
             sql = sql.substring(0, startIndex) + "?" + sql.substring(endIndex + 1);
             startIndex = sql.indexOf("#{");
         }
+        return sql;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String matchForeach(String sql, Map<String, Object> parameters) {
+        String foreach;
+        Matcher separatorMatcher;
+        String separator;
+        Matcher collectionMatcher;
+        String collection;
+        List<String> strList;
+        StringBuilder sb;
+        List<Map<String, Object>> paramList;
+        int forStart = sql.indexOf("<foreach");
+        while (forStart >= 0) {
+            int forEnd = sql.indexOf("</foreach>");
+            int lastStart = sql.substring(0, forEnd).lastIndexOf("<foreach");
+
+            foreach = sql.substring(lastStart, forEnd);
+            // 分隔符
+            separatorMatcher = SEPARATOR_PATTERN.matcher(foreach);
+            separator = separatorMatcher.find() ? separatorMatcher.group(0)
+                    .replace("separator=\"", "").replace("\"", "") : ",";
+            // 集合key
+            collectionMatcher = COLLECTION_PATTERN.matcher(foreach);
+            if (!collectionMatcher.find()) {
+                throw new SQLErrorException("SQL表达式异常：foreach标签缺少collection属性");
+            }
+            collection = collectionMatcher.group(0).replace("collection=\"", "")
+                    .replace("\"", "");
+            if (!parameters.containsKey(collection)) {
+                throw new SQLErrorException("SQL参数异常：缺少参数 " + collection);
+            }
+            if (!(parameters.get(collection) instanceof Collection)) {
+                throw new SQLErrorException("SQL参数异常：参数" + collection + " 应为集合类型");
+            }
+
+            int tabStart = foreach.indexOf(">");
+            String tabInner = foreach.substring(tabStart + 1);
+            strList = new ArrayList<>();
+            paramList = new ArrayList<>((Collection<Map<String, Object>>) parameters.get(collection));
+            for (int i = 0; i < paramList.size(); i++) {
+                String template = tabInner;
+                int startIndex = template.indexOf("#{");
+                while (startIndex >= 0) {
+                    int endIndex = template.indexOf("}", startIndex);
+                    String key = template.substring(startIndex + 2, endIndex);
+
+                    if (key.startsWith(collection + ".")) {
+                        // 设置for前缀
+                        String forPrefix = "for:" + i + ":";
+                        // 设置新key对应的参数
+                        Map<String, Object> sub = new HashMap<>(8);
+                        if (parameters.containsKey(forPrefix + collection)) {
+                            sub = (Map<String, Object>) parameters.get(forPrefix + collection);
+                        }
+                        sub.put(key.split("\\.")[1], paramList.get(i).get(key.split("\\.")[1]));
+                        parameters.put(forPrefix + collection, sub);
+                        // 设置新的key
+                        template = template.replaceFirst("#\\{" + key + "}", "#\\{" + forPrefix + key + "}");
+                    }
+                    startIndex = template.indexOf("#{", endIndex);
+                }
+                strList.add(template);
+            }
+            sql = sql.replace(foreach + "</foreach>", String.join(separator, strList));
+            forStart = sql.indexOf("<foreach");
+        }
+        return sql;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object[] matchParameter(List<String> list, Map<String, Object> parameters) {
         Object[] arr = new Object[list.size()];
         if (!list.isEmpty()) {
             // 设置参数
@@ -88,7 +173,7 @@ public class DefaultSqlRunner implements SqlRunner {
                 arr[i] = value;
             }
         }
-        return execute(sql, arr, function);
+        return arr;
     }
 
     private <E> E execute(String sql, Object[] parameters, StatementHolder<PreparedStatement, E> function) {
@@ -231,6 +316,26 @@ public class DefaultSqlRunner implements SqlRunner {
     }
 
     @Override
+    public int insertBatch(String sql, List<Map<String, Object>> parameters, String collection, int batchSize) {
+        if (parameters == null || parameters.isEmpty()) {
+            return 0;
+        }
+        Map<String, Object> vars = new HashMap<>(8);
+        if (batchSize <= 0) {
+            vars.put(collection, parameters);
+            return execute(sql, vars, (PreparedStatement::executeUpdate));
+        }
+        // 分批次提交执行
+        int num = parameters.size() % batchSize > 0 ? parameters.size() / batchSize + 1 : parameters.size() / batchSize;
+        for (int i = 0; i < num; i++) {
+            vars.put(collection, parameters.subList(i * batchSize, Math.min((i + 1) * batchSize,
+                    parameters.size())));
+            execute(sql, vars, (PreparedStatement::executeUpdate));
+        }
+        return 0;
+    }
+
+    @Override
     public int update(String sql, Map<String, Object> parameters) {
         return execute(sql, parameters, (PreparedStatement::executeUpdate));
     }
@@ -240,6 +345,12 @@ public class DefaultSqlRunner implements SqlRunner {
         return execute(sql, parameters, (PreparedStatement::executeUpdate));
     }
 
+    /**
+     * 下划线转驼峰
+     *
+     * @param str 字符串
+     * @return 替换结果
+     */
     public static String underlineToCamel(String str) {
         if (str == null || str.length() == 0) {
             return null;

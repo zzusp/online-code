@@ -163,7 +163,7 @@ public class ProcessServiceImpl implements ProcessService {
                         executor.compiler(task.getExecuteCmd());
                     }
                 }
-                sqlSession.getMapper(ProcessTaskMapper.class).batchInsert(process.getTasks());
+                sqlSession.getMapper(ProcessTaskMapper.class).insertBatch(process.getTasks());
             }
             sqlSession.commit();
             // 删除缓存
@@ -207,7 +207,7 @@ public class ProcessServiceImpl implements ProcessService {
                     task.setProcCode(procCode);
                 }
                 // 节点入库
-                sqlSession.getMapper(ProcessTaskMapper.class).batchInsert(tasks);
+                sqlSession.getMapper(ProcessTaskMapper.class).insertBatch(tasks);
             }
             sqlSession.commit();
         }

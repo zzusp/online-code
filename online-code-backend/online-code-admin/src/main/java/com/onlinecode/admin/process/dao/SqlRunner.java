@@ -28,6 +28,8 @@ public interface SqlRunner extends Closeable {
 
     int insert(String sql, Map<String, Object> parameters);
 
+    int insertBatch(String sql, List<Map<String, Object>> parameters, String collection, int batchSize);
+
     int update(String sql, Map<String, Object> parameters);
 
     int delete(String sql, Map<String, Object> parameters);

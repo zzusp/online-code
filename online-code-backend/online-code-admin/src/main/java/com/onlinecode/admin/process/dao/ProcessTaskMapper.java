@@ -47,7 +47,7 @@ public interface ProcessTaskMapper {
             "  (#{item.id}, #{item.procCode}, #{item.taskCode}, #{item.taskName}, #{item.executeCmd})" +
             " </foreach>" +
             "</script>")
-    void batchInsert(@Param("list") List<SysProcessTask> list);
+    void insertBatch(@Param("list") List<SysProcessTask> list);
 
     @Delete("DELETE FROM sys_process_task WHERE proc_code = #{procCode}")
     void deleteByProcCode(@Param("procCode") String procCode);

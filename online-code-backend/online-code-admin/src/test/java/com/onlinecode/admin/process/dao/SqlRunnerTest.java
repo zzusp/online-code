@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,4 +77,19 @@ public class SqlRunnerTest {
 
     }
 
+    @Test
+    public void insertBatch() {
+        String sql = "INSERT INTO sys_user_role(user_id,role_id) VALUES <foreach collection=\"list\" separator=\",\">(#{list.userId},#{list.id})</foreach>";
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Map<String, Object> vars = new HashMap<>(8);
+            vars.put("userId", i+1);
+            vars.put("id", i);
+            list.add(vars);
+        }
+        DefaultSqlRunner sqlRunner = sqlRunnerFactory.openRunner();
+        sqlRunner.insertBatch(sql, list, "list", 5);
+//        System.out.println(sqlRunner.matchForeach(sql, vars));;
+        sqlRunner.commit();
+    }
 }
