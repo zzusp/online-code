@@ -13,8 +13,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,53 +30,49 @@ public class PermsInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         List<SysProcess> list = processService.listAll();
-        if (list.isEmpty()) {
-            renderString(response, JSONObject.toJSONString(R.unauthorized()));
-            return false;
-        }
         // 可匿名访问的接口
         Set<String> anonProcSet = list.stream().filter(v -> "0".equals(v.getAuth()) && "1".equals(v.getStatus()))
                 .map(SysProcess::getProcCode).collect(Collectors.toSet());
-        if (anonProcSet.isEmpty()) {
-            renderString(response, JSONObject.toJSONString(R.unauthorized()));
-            return false;
-        }
         RepeatedlyRequestWrapper requestWrapper = new RepeatedlyRequestWrapper(request, response);
         RunParam param = JSONObject.parseObject(RepeatedlyRequestWrapper.getBodyString(requestWrapper), RunParam.class);
         // 登录页面免登录
         if (param != null && "menuGetByCode".equals(param.getProcCode()) && "login".equals(param.getVars().get("code"))) {
             return true;
         }
+        String url = request.getServletPath();
         String procCode = param != null ? param.getProcCode() : null;
-        if (StringUtils.isNoneBlank(procCode) && anonProcSet.contains(procCode)) {
+        if ("/process/run".equals(url) && StringUtils.isNoneBlank(procCode) && anonProcSet.contains(procCode)) {
             return true;
         }
         if (StpUtil.isLogin()) {
-            String url = request.getServletPath();
-            Set<String> authUrlSet = new HashSet<>();
-            authUrlSet.add("/process/list");
-            authUrlSet.add("/process/getById");
-            authUrlSet.add("/process/getInfoWithTaskById");
-            authUrlSet.add("/process/save");
-            authUrlSet.add("/process/copy");
-            authUrlSet.add("/process/delete");
-            authUrlSet.add("/process/run");
-            authUrlSet.add("/process/runTask");
-            authUrlSet.add("/process/runCmd");
-            if (authUrlSet.contains(url)) {
+            // 用户接口权限
+            // 查询角色权限
+            List<Map<String, Object>> roles = (List<Map<String, Object>>) StpUtil.getSession().get("roles");
+            // 菜单
+            List<Map<String, Object>> menus = (List<Map<String, Object>>) StpUtil.getSession().get("menus");
+            // 流程
+            List<Map<String, Object>> process = (List<Map<String, Object>>) StpUtil.getSession().get("process");
+
+            // 判断菜单路径
+            Set<String> urlSet = menus.stream().filter(v -> v.get("url") != null)
+                    .map(v -> v.get("url").toString()).collect(Collectors.toSet());
+            if (urlSet.contains(url)) {
                 return true;
             }
-            Set<String> authProcSet = list.stream().filter(v -> "1".equals(v.getAuth()) && "1".equals(v.getStatus()))
-                    .map(SysProcess::getProcCode).collect(Collectors.toSet());
-            Set<String> permsProcSet = list.stream().filter(v -> "2".equals(v.getAuth()) && "1".equals(v.getStatus()))
-                    .map(SysProcess::getProcCode).collect(Collectors.toSet());
-            if (!authProcSet.isEmpty() && authProcSet.contains(procCode)) {
+            // 判断菜单编码
+            if (param != null && "menuGetByCode".equals(procCode)) {
+                Set<String> menuSet = menus.stream().map(v -> v.get("code").toString()).collect(Collectors.toSet());
+                if (!menuSet.isEmpty() && menuSet.contains(param.getVars().get("code").toString())) {
+                    return true;
+                }
+            }
+            // 判断流程编码
+            Set<String> procSet = process.stream().map(v -> v.get("procCode").toString()).collect(Collectors.toSet());
+            if ("/process/run".equals(url) && !procSet.isEmpty() && procSet.contains(procCode)) {
                 return true;
             }
-            // TODO 用户绑定接口权限
-            if (!permsProcSet.isEmpty() && permsProcSet.contains(procCode)) {
-                return true;
-            }
+            renderString(response, JSONObject.toJSONString(R.forbidden()));
+            return false;
         }
         renderString(response, JSONObject.toJSONString(R.unauthorized()));
         return false;

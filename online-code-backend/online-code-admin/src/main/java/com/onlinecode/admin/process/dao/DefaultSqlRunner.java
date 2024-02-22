@@ -128,10 +128,14 @@ public class DefaultSqlRunner implements SqlRunner {
                 while (startIndex >= 0) {
                     int endIndex = template.indexOf("}", startIndex);
                     String key = template.substring(startIndex + 2, endIndex);
-
-                    if (key.startsWith(collection + ".")) {
-                        // 设置for前缀
-                        String forPrefix = "for:" + i + ":";
+                    // 设置for前缀
+                    String forPrefix = "for:" + i + ":";
+                    if (!key.contains(".")) {
+                        String newKey = forPrefix + collection + ":" + key;
+                        parameters.put(newKey, paramList.get(i));
+                        // 设置新的key
+                        template = template.replaceFirst("#\\{" + key + "}", "#\\{" + newKey + "}");
+                    } else if (key.startsWith(collection + ".")) {
                         // 设置新key对应的参数
                         Map<String, Object> sub = new HashMap<>(8);
                         if (parameters.containsKey(forPrefix + collection)) {

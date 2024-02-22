@@ -45,6 +45,8 @@ public class SqlRunnerTest {
 //        // 测试报错自动回滚
 //        num = sqlRunner.update("UPDATE leaf_alloc SET step = #{step}, update_time = #{update_time} WHERE biz_tag = #{biz_tag}", updateData);
 
+//        List<Map<String, Object>> roles = sqlRunner.selectList("SELECT role_id FROM sys_user_role WHERE user_id=#{id}", user);
+//        List<String> roleIds = roles.stream().map(v -> v.get("roleId").toString()).collect(Collectors.toList());
 
         Map<String, Object> vars = new HashMap<>(8);
         vars.put("pageNum", 1);
@@ -63,16 +65,30 @@ public class SqlRunnerTest {
 //        // 分页
 //        PageHelper.startPage((int) vars.getOrDefault("pageNum", 1), (int) vars.getOrDefault("pageSize", 0));
 //        // 查询
-        List<Map<String, Object>> list = sqlRunner.selectList(sql, vars, true);
-        Map<String, Long> procMap =  list.stream().map(v -> v.get("menu_code").toString()).collect(Collectors.groupingBy(v -> v, Collectors.counting()));
+//        List<Map<String, Object>> list = sqlRunner.selectList(sql, vars, true);
+//        Map<String, Long> procMap =  list.stream().map(v -> v.get("menu_code").toString()).collect(Collectors.groupingBy(v -> v, Collectors.counting()));
 //        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(list);
 //        sqlRunner.close();
 //        // 设置返回结果
 //        vars.put("flowRes", PageTable.page(pageInfo.getTotal(), pageInfo.getList()));
-        sqlRunner.selectPage(sql, vars, true);
+//        sqlRunner.selectPage(sql, vars, true);
 //        sqlRunner.commit();
 //        sqlRunner.close();
-
+        List<String> roleIds = new ArrayList<>();
+        roleIds.add("1");
+        roleIds.add("2");
+        roleIds.add("3");
+        Map<String, Object> query = new HashMap<>(8);
+        query.put("roleIds", roleIds);
+        List<Map<String, Object>> menus = sqlRunner.selectList("SELECT sm.code, sm.auth, sm.url FROM sys_menu sm " +
+                "LEFT JOIN sys_role_menu srm ON sm.id=srm.menu_id WHERE srm.role_id IN " +
+                "(<foreach collection=\"roleIds\" separator=\",\">#{item}</foreach>) AND sm.del_flag='0'", query);
+        System.out.println(menus);
+        // 流程
+        List<Map<String, Object>> process = sqlRunner.selectList("SELECT sp.proc_code, sp.menu_code, sp.auth " +
+                "FROM sys_process sp LEFT JOIN sys_role_process srp ON sp.id=srp.proc_id "
+                + "WHERE srp.role_id IN (<foreach collection=\"roleIds\" separator=\",\">#{item}</foreach>) AND sp.del_flag='0'", query, true);
+        System.out.println(process);
 
 
     }
