@@ -21,10 +21,23 @@
   height: 40px;
 }
 
+.property-panel.code-mode {
+  z-index: 101;
+  width: 100%;
+  height: calc(100vh - 90px);
+  top: unset !important;
+  right: unset !important;
+  transition: unset !important;
+}
+
+.panel-top-toolbar {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+ }
+
 .off-screen {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  float: right;
   width: 20px;
   height: 20px;
   background-image: url('../../../assets/off-screen-one.svg');
@@ -47,9 +60,7 @@
 }
 
 .full-screen {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  float: right;
   width: 20px;
   height: 20px;
   background-image: url('../../../assets/full-screen-one.svg');
@@ -100,8 +111,8 @@
 
 .base-monaco-full-screen-icon {
   background-image: url('../../../assets/full-screen-two.svg') !important;
-  top: 0 !important;
-  right: -30px !important;
+  /*top: 0 !important;*/
+  /*right: -30px !important;*/
 }
 
 .base-monaco-full-screen-icon-cancel {

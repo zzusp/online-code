@@ -35,7 +35,9 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
     .then((res: any) => {
       if (res.status === 200 && res.data && res.data.code === 200 && res.data.data) {
         schema = JSON.parse(res.data.data.schema_json);
-        window.localStorage.setItem(getLSName(scenarioName), res.data.data.schema_json);
+        if ('login' !== scenarioName) {
+          window.localStorage.setItem(getLSName(scenarioName), res.data.data.schema_json);
+        }
       }
     })
     .catch((err: any) => {

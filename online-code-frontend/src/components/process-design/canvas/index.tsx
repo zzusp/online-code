@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, Input, Message} from '@alifd/next';
+import {Button, Form, Icon, Input, Message, Switch} from '@alifd/next';
 import IceTitle from '@icedesign/title';
 
 import { AsObject } from 'universal-request/lib/types';
@@ -54,6 +54,7 @@ export class ProcessCanvas extends React.Component<any, any> {
     collapse: true,
     showCodeEdit: false,
     fullScreen: false,
+    codeMode: false,
     editorValue: '',
     runResult: ''
   };
@@ -315,6 +316,10 @@ export class ProcessCanvas extends React.Component<any, any> {
     this.setState({collapse: !this.state.collapse})
   }
 
+  toggleCodeMode() {
+    this.setState({codeMode: !this.state.codeMode})
+  }
+
   addBpmnListener() {
     // 给图绑定事件，当图有发生改变就会触发这个事件
     const modeler = this.state.bpmnModeler as any;
@@ -350,45 +355,78 @@ export class ProcessCanvas extends React.Component<any, any> {
         span: 18
       }
     };
+
+    const formMode = (
+      <div>
+        <Form style={{padding: '60px 0 0 0', width: '100%'}} {...formItemLayout} colon>
+          <FormItem
+            name="name"
+            label="名称"
+            required
+            requiredMessage=""
+          >
+            <Input value={this.state.task.taskCode} style={{display: 'none'}}/>
+            <Input value={this.state.task.type} style={{display: 'none'}}/>
+            <Input value={this.state.task.taskName} onChange={(e) => this.labelChange(e)}/>
+          </FormItem>
+          {
+            !this.state.showCodeEdit ? null :
+              <FormItem
+                name="code"
+                label="代码"
+                required
+                requiredMessage=""
+              >
+                <div className={this.state.fullScreen ? 'full-screen-code' : 'off-screen-code'}>
+                  <CodeEditor code={this.state.task.executeCmd} codeChange={(e: string) => this.codeChange(e)} />
+                </div>
+              </FormItem>
+          }
+        </Form>
+        <RunCode code={this.state.task.executeCmd}/>
+      </div>
+    );
+
+    const codeMode = (
+      <div style={{display: 'flex'}}>
+        <div style={{width: '60%', height: 'calc(100vh - 90px)'}}>
+          <CodeEditor code={this.state.task.executeCmd} codeChange={(e: string) => this.codeChange(e)} />
+        </div>
+        <div style={{width: '40%'}}>
+          <RunCode code={this.state.task.executeCmd}/>
+        </div>
+      </div>
+    );
+
     return (
       <div className="containers">
         <div className="canvas" id={'canvas_' + this.state.proc.procCode}></div>
         <div id={'js-properties-panel_' + this.state.proc.procCode} className="panel"></div>
-        <div className={['property-panel', this.state.collapse ? 'collapse' : 'expand'].join(" ")}>
+        <div className={['property-panel', this.state.collapse ? 'collapse' : this.state.codeMode ? 'code-mode' : 'expand'].join(" ")}>
           {
             this.state.collapse ? null :
               <IceTitle text={this.state.task.type === 'bpmn:SequenceFlow' ? '连线' : "节点"}
                         style={{position:'absolute', margin:'20px 0 0 20px'}} />
           }
-          <div className={this.state.collapse ? 'full-screen' : 'off-screen'}
-               onClick={() => this.toggleCollapse()}/>
-          <Form style={{padding: '60px 0 0 0', width: '100%'}} {...formItemLayout} colon>
-            <FormItem
-              name="name"
-              label="名称"
-              required
-              requiredMessage=""
-            >
-              <Input value={this.state.task.taskCode} style={{display: 'none'}}/>
-              <Input value={this.state.task.type} style={{display: 'none'}}/>
-              <Input value={this.state.task.taskName} onChange={(e) => this.labelChange(e)}/>
-            </FormItem>
+          <div className="panel-top-toolbar">
+            <div className={this.state.collapse ? 'full-screen' : 'off-screen'}
+                 onClick={() => this.toggleCollapse()}/>
             {
-              !this.state.showCodeEdit ? null :
-                <FormItem
-                  name="code"
-                  label="代码"
-                  required
-                  requiredMessage=""
-                >
-                  <div className={this.state.fullScreen ? 'full-screen-code' : 'off-screen-code'}>
-                    <CodeEditor code={this.state.task.executeCmd} codeChange={(e: string) => this.codeChange(e)} />
-                  </div>
-                </FormItem>
+              this.state.collapse ? null :
+                <div style={{float: 'right', marginRight: '6px'}}>
+                  <Switch
+                  size="small"
+                  autoWidth
+                  checkedChildren="返回编辑模式"
+                  unCheckedChildren="打开代码模式"
+                  checked={this.state.codeMode}
+                  onChange={() => this.toggleCodeMode()}
+                  style={{ verticalAlign: "middle" }}
+                />
+                </div>
             }
-          </Form>
-
-          <RunCode code={this.state.task.executeCmd}/>
+          </div>
+          {this.state.collapse ? null : this.state.codeMode ? codeMode : formMode}
         </div>
       </div>
     )

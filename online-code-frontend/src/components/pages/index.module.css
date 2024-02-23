@@ -12,6 +12,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
 }
 
+.next-shell-action .next-avatar-small {
+  border: 1px solid #ddd !important;
+}
+
 .menu {
   line-height: 40px;
   border: 0 !important;
