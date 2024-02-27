@@ -55,16 +55,6 @@ class RunCode extends React.Component<any, any> {
           </Card>
           <Card free>
             <Card.Content style={{height: 200, overflow: 'auto'}}>
-              {/*<Input.TextArea*/}
-              {/*  style={{ width: '100%'}}*/}
-              {/*  readOnly={true}*/}
-              {/*  placeholder="输出"*/}
-              {/*  maxLength={8000}*/}
-              {/*  rows={11}*/}
-              {/*  showLimitHint*/}
-              {/*  aria-label="input max length 100"*/}
-              {/*  value={this.state.outputVal}*/}
-              {/*/>*/}
               <React.Fragment>
                 <JsonView data={this.state.outputVal} shouldExpandNode={allExpanded} style={defaultStyles} />
               </React.Fragment>
