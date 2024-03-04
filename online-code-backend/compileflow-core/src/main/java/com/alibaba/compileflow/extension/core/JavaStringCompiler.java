@@ -193,11 +193,13 @@ public class JavaStringCompiler {
         if (matcher.find()) {
             className += matcher.group().replaceFirst("class", "")
                     .replace("extends", "").trim();
+            return className;
         }
         matcher = CLASS_IMPL_PATTERN.matcher(sourceCode);
         if (matcher.find()) {
             className += matcher.group().replaceFirst("class", "")
                     .replace("implements", "").trim();
+            return className;
         }
         matcher = CLASS_PATTERN.matcher(sourceCode);
         if (matcher.find()) {
