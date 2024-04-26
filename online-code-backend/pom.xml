@@ -38,6 +38,9 @@
         <redisson.boot.version>3.18.0</redisson.boot.version>
         <fastjson2.version>2.0.24</fastjson2.version>
         <junit.version>4.12</junit.version>
+        <slow-sql-monitor.version>1.0.2</slow-sql-monitor.version>
+        <elasticsearch.version>7.17.15</elasticsearch.version>
+        <jakarta-json.version>2.0.1</jakarta-json.version>
     </properties>
 
     <dependencyManagement>
@@ -130,6 +133,32 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+            <!-- SQL监控 -->
+            <dependency>
+                <groupId>io.github.zzusp</groupId>
+                <artifactId>slow-sql-monitor-spring-boot-autoconfigure</artifactId>
+                <version>${slow-sql-monitor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.zzusp</groupId>
+                <artifactId>slow-sql-monitor-pool-druid</artifactId>
+                <version>${slow-sql-monitor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.zzusp</groupId>
+                <artifactId>slow-sql-monitor-spring-boot-elasticsearch</artifactId>
+                <version>${slow-sql-monitor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.json</groupId>
+                <artifactId>jakarta.json-api</artifactId>
+                <version>${jakarta-json.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

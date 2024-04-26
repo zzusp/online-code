@@ -45,3 +45,12 @@ spring:
       wall:
         config:
           multi-statement-allow: true
+slow-sql-monitor:
+  slow-millis: 1000
+  log-slow-sql: false
+  elasticsearch:
+    enabled: true
+    uris: http://127.0.0.1:9200
+    username: elastic
+    password: 123456
+    sendMillis: 0
