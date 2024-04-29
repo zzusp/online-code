@@ -152,8 +152,8 @@ public class ProcessServiceImpl implements ProcessService {
                 process.setUpdateTime(LocalDateTime.now());
                 sqlSession.getMapper(ProcessMapper.class).update(process);
             }
-            sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
             if (process.getTasks() != null && process.getTasks().size() > 0) {
+                sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
                 for (SysProcessTask task : process.getTasks()) {
                     if (task.getId() == null) {
                         task.setId(idGen.get("sys_process").getId());
