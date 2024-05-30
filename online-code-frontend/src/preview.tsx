@@ -7,7 +7,8 @@ import { buildComponents, assetBundle, AssetLevel, AssetLoader } from '@alilc/lo
 import ReactRenderer from '@alilc/lowcode-react-renderer';
 import { injectComponents } from '@alilc/lowcode-plugin-inject';
 import appHelper from './appHelper';
-import { getProjectSchemaFromLocalStorage, getPackagesFromLocalStorage, getPreviewLocale, setPreviewLocale } from './services/mockService';
+import { getPackagesFromLocalStorage, getPreviewLocale, setPreviewLocale } from './services/mockService';
+import { getProjectSchemaFromDb } from './services/schemaService';
 
 const getScenarioName = function () {
   if (location.search) {
@@ -21,8 +22,8 @@ const SamplePreview = () => {
 
   async function init() {
     const scenarioName = getScenarioName();
-    const packages = getPackagesFromLocalStorage(scenarioName);
-    const projectSchema = getProjectSchemaFromLocalStorage(scenarioName);
+    const packages = await getPackagesFromLocalStorage(scenarioName);
+    const projectSchema = await getProjectSchemaFromDb(scenarioName);
     const {
       componentsMap: componentsMapArray,
       componentsTree,

@@ -1,0 +1,67 @@
+{
+  "packages": [
+    {
+      "package": "plugin-custom-renderer",
+      "version": "0.1.0",
+      "library": "BizComp",
+      "urls": [
+        "./render/default/view.js",
+        "./render/default/view.css"
+      ],
+      "editUrls": [
+        "./view.js",
+        "./view.css"
+      ],
+      "advancedUrls": {
+        "default": [
+          "./render/default/view.js",
+          "./render/default/view.css"
+        ]
+      },
+      "advancedEditUrls": {}
+    }
+  ],
+  "components": [
+    {
+      "exportName": "PluginCustomRendererMeta",
+      "npm": {
+        "package": "plugin-custom-renderer",
+        "version": "0.1.0"
+      },
+      "url": "./meta.js",
+      "urls": {
+        "default": "./meta.js"
+      },
+      "advancedUrls": {
+        "default": [
+          "./meta.js"
+        ]
+      }
+    }
+  ],
+  "sort": {
+    "groupList": [
+      "精选组件",
+      "原子组件"
+    ],
+    "categoryList": [
+      "基础元素",
+      "布局容器类",
+      "表格类",
+      "表单详情类",
+      "帮助类",
+      "对话框类",
+      "业务类",
+      "通用",
+      "引导",
+      "信息输入",
+      "信息展示",
+      "信息反馈"
+    ]
+  },
+  "groupList": [
+    "精选组件",
+    "原子组件"
+  ],
+  "ignoreComponents": {}
+}

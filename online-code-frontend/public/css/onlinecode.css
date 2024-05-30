@@ -1,0 +1,34 @@
+#ice-container {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-user-select: auto;
+  -webkit-user-drag: none;
+  -webkit-text-size-adjust: none;
+  -webkit-touch-callout: none;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+  height: 100%;
+}
+
+.fd-layout-page {
+  height: 100%;
+  min-height: auto !important;
+}
+
+.fusion-ui-pro-table-content .next-overlay-wrapper {
+  position: absolute !important;
+  z-index: 1000;
+  right: 0;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,.3);
+  border-radius: 5px;
+}

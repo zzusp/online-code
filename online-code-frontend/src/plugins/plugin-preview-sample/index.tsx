@@ -2,7 +2,7 @@ import { IPublicModelPluginContext } from '@alilc/lowcode-types';
 import { Button } from '@alifd/next';
 import {
   saveSchema,
-} from '../../services/mockService';
+} from '../../services/schemaService';
 
 // 保存功能示例
 const PreviewSamplePlugin = (ctx: IPublicModelPluginContext) => {

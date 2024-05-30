@@ -1,0 +1,5 @@
+.fusion-ui-pro-table-content .next-overlay-wrapper {
+  position: absolute !important;
+  z-index: 1000;
+  right: 0;
+}
