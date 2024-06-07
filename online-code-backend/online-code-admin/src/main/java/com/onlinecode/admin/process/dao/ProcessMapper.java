@@ -6,6 +6,12 @@ import org.apache.ibatis.annotations.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author 孙鹏
+ * @description 编排流程Mapper
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public interface ProcessMapper {
 
     @Select("<script>SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +

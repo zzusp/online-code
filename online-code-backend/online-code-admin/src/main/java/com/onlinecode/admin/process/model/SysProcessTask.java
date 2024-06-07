@@ -1,5 +1,11 @@
 package com.onlinecode.admin.process.model;
 
+/**
+ * @author 孙鹏
+ * @description 编排流程节点实体
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public class SysProcessTask {
 
     private Long id;
