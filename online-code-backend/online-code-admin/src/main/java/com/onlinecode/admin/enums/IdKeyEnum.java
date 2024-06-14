@@ -47,7 +47,7 @@ public enum IdKeyEnum {
     }
 
     public static Boolean isValid(String code) {
-        if (code != null && !code.isEmpty()) {
+        if (code == null || code.isEmpty()) {
             return false;
         }
         return null != LOCAL_MAP.get(code);
