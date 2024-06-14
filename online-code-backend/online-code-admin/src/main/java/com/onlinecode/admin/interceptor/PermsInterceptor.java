@@ -2,12 +2,15 @@ package com.onlinecode.admin.interceptor;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.protobuf.Message;
+import com.google.protobuf.util.JsonFormat;
 import com.onlinecode.admin.constant.ProcConstants;
 import com.onlinecode.admin.enums.AuthTypeEnum;
 import com.onlinecode.admin.enums.StatusEnum;
-import com.onlinecode.admin.process.model.RunParam;
+import com.onlinecode.admin.process.model.JsonVars;
 import com.onlinecode.admin.process.model.SysProcess;
 import com.onlinecode.admin.process.service.ProcessService;
+import com.onlinecode.admin.proto.RunProto;
 import com.onlinecode.admin.web.R;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -39,13 +42,16 @@ public class PermsInterceptor implements HandlerInterceptor {
                 .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
                 .map(SysProcess::getProcCode).collect(Collectors.toSet());
         RepeatedlyRequestWrapper requestWrapper = new RepeatedlyRequestWrapper(request, response);
-        RunParam param = JSONObject.parseObject(RepeatedlyRequestWrapper.getBodyString(requestWrapper), RunParam.class);
+        RunProto.Run.Builder builder = RunProto.Run.newBuilder();
+        JsonFormat.Parser parser = JsonFormat.parser();
+        parser.merge(RepeatedlyRequestWrapper.getBodyString(requestWrapper), builder);
+        RunProto.Run proto = builder.build();
         // 登录页面免登录
-        if (param != null && ProcConstants.MENU_GET_BY_CODE.equals(param.getProcCode())) {
+        if (proto != null && ProcConstants.MENU_GET_BY_CODE.equals(proto.getProcCode())) {
             return true;
         }
         String url = request.getServletPath();
-        String procCode = param != null ? param.getProcCode() : null;
+        String procCode = proto != null ? proto.getProcCode() : null;
         if (ProcConstants.PROC_RUN_URL.equals(url) && StringUtils.isNoneBlank(procCode) && anonProcSet.contains(procCode)) {
             return true;
         }
@@ -65,9 +71,10 @@ public class PermsInterceptor implements HandlerInterceptor {
                 return true;
             }
             // 判断菜单编码
-            if (param != null && ProcConstants.MENU_GET_BY_CODE.equals(procCode)) {
+            if (proto != null && ProcConstants.MENU_GET_BY_CODE.equals(procCode)) {
+                JsonVars vars = JsonVars.parse(proto.getVars());
                 Set<String> menuSet = menus.stream().map(v -> v.get("code").toString()).collect(Collectors.toSet());
-                if (!menuSet.isEmpty() && menuSet.contains(param.getVars().get("code").toString())) {
+                if (!menuSet.isEmpty() && vars != null && menuSet.contains(vars.get("code").toString())) {
                     return true;
                 }
             }

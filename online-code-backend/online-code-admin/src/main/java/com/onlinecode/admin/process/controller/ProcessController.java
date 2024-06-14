@@ -1,8 +1,9 @@
 package com.onlinecode.admin.process.controller;
 
-import com.onlinecode.admin.process.model.RunParam;
 import com.onlinecode.admin.process.model.SysProcess;
 import com.onlinecode.admin.process.service.ProcessService;
+import com.onlinecode.admin.process.model.JsonVars;
+import com.onlinecode.admin.proto.RunProto;
 import com.onlinecode.admin.web.R;
 import com.onlinecode.admin.web.page.PageParam;
 import com.onlinecode.admin.web.page.PageTable;
@@ -53,23 +54,23 @@ public class ProcessController {
         return R.ok();
     }
 
-    @PostMapping("/run")
-    public R<Object> run(@RequestBody RunParam param) {
-        return R.ok(processService.run(param.getProcCode(), param.getVars()));
+    @PostMapping(value = "/run", produces = "application/x-protobuf;charset=UTF-8")
+    public R<Object> run(@RequestBody RunProto.Run proto) {
+        return R.ok(processService.run(proto.getProcCode(), JsonVars.parse(proto.getVars())));
     }
 
-    @PostMapping("/runTask")
-    public R<Object> runTask(@RequestBody RunParam param) {
-        return R.ok(processService.runTask(param.getProcCode(), param.getTaskCode(), param.getVars()));
+    @PostMapping(value = "/runTask", produces = "application/x-protobuf;charset=UTF-8")
+    public R<Object> runTask(@RequestBody RunProto.Run proto) {
+        return R.ok(processService.runTask(proto.getProcCode(), proto.getTaskCode(), JsonVars.parse(proto.getVars())));
     }
 
-    @PostMapping("/runCmd")
-    public R<Object> runCmd(@RequestBody RunParam param) {
-        if (StringUtils.isBlank(param.getCmd())) {
+    @PostMapping(value = "/runCmd", produces = "application/x-protobuf;charset=UTF-8")
+    public R<Object> runCmd(@RequestBody RunProto.Run proto) {
+        if (StringUtils.isBlank(proto.getCmd())) {
             return R.error("代码不可为空");
         }
         try {
-            return R.ok(processService.runCmd(param.getCmd(), param.getVars()));
+            return R.ok(processService.runCmd(proto.getCmd(), JsonVars.parse(proto.getVars())));
         } catch (Exception e) {
             return R.error("节点执行失败，错误信息：\n" + ExceptionUtils.getStackTrace(e));
         }
