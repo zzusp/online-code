@@ -22,6 +22,13 @@ export function createFetchHandler(config?: Record<string, unknown>) {
 
 // config 留着扩展
 export async function createFetch(options: RequestOptions) {
+
+  let proto = require('./services/protos/run');
+  let run = proto.lookup('Run');
+  let buffer = run.encode(options.data).finish();
+  buffer = buffer.slice(0, buffer.byteOffset + buffer.byteLength);
+  options.data = buffer.buffer;
+
   return new Promise<any>(((resolve, reject) => {
     request(options).then((res: any) => {
       if (res.status === 200) {

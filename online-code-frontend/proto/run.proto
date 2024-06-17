@@ -1,0 +1,11 @@
+syntax = "proto3";
+package com.onlinecode.admin.proto;
+option java_package = "com.onlinecode.admin.proto";
+option java_outer_classname = "RunProto";
+
+message Run {
+  string procCode = 1;
+  string taskCode = 2;
+  string cmd = 3;
+  string vars = 4;
+}

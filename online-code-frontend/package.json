@@ -9,7 +9,9 @@
     "start": "build-scripts start --disable-reload --port 5556",
     "build": "build-scripts build",
     "prepublishOnly": "npm run build",
-    "pub": "node ./scripts/watchdog.js && npm pub"
+    "pub": "node ./scripts/watchdog.js && npm pub",
+    "pdjs": "pbjs -t json-module -w commonjs -o src/services/protos/run.js ./proto/run.proto",
+    "pdjs2": "pbjs -t static-module -w commonjs -o src/services/protos/run_pb.js ./proto/run.proto"
   },
   "files": [
     "build"
@@ -37,6 +39,8 @@
     "bpmn-js": "^13.2.2",
     "bpmn-js-properties-panel": "^3.0.0",
     "moment": "^2.29.3",
+    "protobufjs": "^7.3.2",
+    "protobufjs-cli": "^1.1.2",
     "react-json-view-lite": "^1.0.0",
     "react-router-dom": "^6.14.1",
     "uuid": "^8.3.2"

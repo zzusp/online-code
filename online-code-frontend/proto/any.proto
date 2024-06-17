@@ -1,0 +1,13 @@
+syntax = "proto3";
+package proto;
+option java_package = "proto";
+option java_outer_classname = "AnyProto";
+
+import "google/protobuf/any.proto";
+
+message Any {
+  string procCode = 1;
+  string taskCode = 2;
+  string cmd = 3;
+  map<string, google.protobuf.Any> vars = 4;
+}

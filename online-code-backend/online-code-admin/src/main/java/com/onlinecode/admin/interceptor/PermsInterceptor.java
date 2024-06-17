@@ -19,6 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,10 +43,10 @@ public class PermsInterceptor implements HandlerInterceptor {
                 .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
                 .map(SysProcess::getProcCode).collect(Collectors.toSet());
         RepeatedlyRequestWrapper requestWrapper = new RepeatedlyRequestWrapper(request, response);
-        RunProto.Run.Builder builder = RunProto.Run.newBuilder();
-        JsonFormat.Parser parser = JsonFormat.parser();
-        parser.merge(RepeatedlyRequestWrapper.getBodyString(requestWrapper), builder);
-        RunProto.Run proto = builder.build();
+
+        byte[] bytes = ("\n\r" + RepeatedlyRequestWrapper.getBodyString(requestWrapper)).getBytes();
+        RunProto.Run proto = RunProto.Run.parseFrom(bytes);
+
         // 登录页面免登录
         if (proto != null && ProcConstants.MENU_GET_BY_CODE.equals(proto.getProcCode())) {
             return true;
