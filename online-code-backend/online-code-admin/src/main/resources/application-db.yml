@@ -3,9 +3,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://124.222.119.198:3306/onlinecode?allowMultiQueries=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: fEJ0CnDop54mQYB!
+    url: jdbc:mysql://124.222.119.198:3306/onlinecode_dev?allowMultiQueries=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    username: onlinecode
+    password: OnlineCodePwd303@!
     # 初始连接数
     initialSize: 5
     # 最小连接池数量
@@ -28,7 +28,7 @@ spring:
     webStatFilter:
       enabled: true
     statViewServlet:
-      enabled: true
+      enabled: false
       # 设置白名单，不填则允许所有访问
       allow:
       url-pattern: /druid/*
@@ -49,7 +49,7 @@ slow-sql-monitor:
   slow-millis: 1000
   log-slow-sql: false
   elasticsearch:
-    enabled: true
+    enabled: false
     uris: http://127.0.0.1:9200
     username: elastic
     password: 123456

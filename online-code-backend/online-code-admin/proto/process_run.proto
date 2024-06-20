@@ -1,0 +1,29 @@
+syntax = "proto3";
+package onlinecode;
+
+import "google/api/annotations.proto";
+
+option java_package = "com.onlinecode.admin.grpc";
+option java_outer_classname = "ProcessRunProto";
+
+service ProcessService {
+  rpc ProcessRun (RunRequest) returns (RunResponse) {
+    option (google.api.http) = {
+      post: "/process/run"
+      body: "*"
+    };
+  }
+}
+
+message RunRequest {
+  string proc_code = 1;
+  string task_code = 2;
+  string cmd = 3;
+  string vars = 4;
+}
+
+message RunResponse {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}

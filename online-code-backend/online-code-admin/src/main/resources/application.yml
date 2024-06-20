@@ -1,5 +1,6 @@
 server:
   port: 7001
+  grpc-port: 9001
 
 spring:
   profiles:

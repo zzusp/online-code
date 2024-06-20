@@ -1,11 +1,11 @@
 package com.onlinecode.admin.process.controller;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.onlinecode.admin.grpc.ProcessRunProto;
+import com.onlinecode.admin.process.model.JsonVars;
 import com.onlinecode.admin.process.model.SysProcess;
 import com.onlinecode.admin.process.service.ProcessService;
-import com.onlinecode.admin.process.model.JsonVars;
-import com.onlinecode.admin.proto.RunProto;
-import com.onlinecode.admin.util.JsonUtils;
+import com.onlinecode.admin.util.ProtobufUtils;
 import com.onlinecode.admin.web.R;
 import com.onlinecode.admin.web.page.PageParam;
 import com.onlinecode.admin.web.page.PageTable;
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/process")
@@ -58,39 +58,40 @@ public class ProcessController {
         return R.ok();
     }
 
-    @PostMapping("/run")
-    public R<Object> run(@RequestBody byte[] data) {
-        try {
-            byte[] bytes = ("\n\r" + new String(data, StandardCharsets.UTF_8)).getBytes();
-            RunProto.Run run = RunProto.Run.parseFrom(bytes);
-            return R.ok(processService.run(run.getProcCode(), JsonUtils.convertJsonToMap(run.getVars())));
-        } catch (InvalidProtocolBufferException e) {
-            return R.error(e.getMessage());
-        }
+    @PostMapping(value = "/run")
+    public void run(@RequestBody byte[] bytes, HttpServletResponse response) throws InvalidProtocolBufferException {
+        // 接收字节数组，转为参数
+        ProcessRunProto.RunRequest proto = ProcessRunProto.RunRequest.parseFrom(bytes);
+        // 业务处理
+        R<Object> r = R.ok(processService.run(proto.getProcCode(), JsonVars.parse(proto.getVars())));
+        // 字节数组方式返回
+        ProtobufUtils.renderBytes(response, r);
     }
 
-    private static String toString(byte[] data) {
-        String temp = "";
-        for (byte b: data) {
-            temp += b;
-        }
-        return temp;
+    @PostMapping(value = "/runTask")
+    public void runTask(@RequestBody byte[] bytes, HttpServletResponse response) throws InvalidProtocolBufferException {
+        // 接收字节数组，转为参数
+        ProcessRunProto.RunRequest proto = ProcessRunProto.RunRequest.parseFrom(bytes);
+        // 业务处理
+        R<Object> r = R.ok(processService.runTask(proto.getProcCode(), proto.getTaskCode(), JsonVars.parse(proto.getVars())));
+        // 字节数组方式返回
+        ProtobufUtils.renderBytes(response, r);
     }
 
-    @PostMapping(value = "/runTask", produces = "application/x-protobuf;charset=UTF-8")
-    public R<Object> runTask(@RequestBody RunProto.Run proto) {
-        return R.ok(processService.runTask(proto.getProcCode(), proto.getTaskCode(), JsonVars.parse(proto.getVars())));
-    }
-
-    @PostMapping(value = "/runCmd", produces = "application/x-protobuf;charset=UTF-8")
-    public R<Object> runCmd(@RequestBody RunProto.Run proto) {
+    @PostMapping(value = "/runCmd")
+    public void runCmd(@RequestBody byte[] bytes, HttpServletResponse response) throws InvalidProtocolBufferException {
+        // 接收字节数组，转为参数
+        ProcessRunProto.RunRequest proto = ProcessRunProto.RunRequest.parseFrom(bytes);
         if (StringUtils.isBlank(proto.getCmd())) {
-            return R.error("代码不可为空");
+            ProtobufUtils.renderBytes(response, R.error("代码不可为空"));
         }
         try {
-            return R.ok(processService.runCmd(proto.getCmd(), JsonVars.parse(proto.getVars())));
+            // 业务处理
+            R<Object> r = R.ok(processService.runCmd(proto.getCmd(), JsonVars.parse(proto.getVars())));
+            // 字节数组方式返回
+            ProtobufUtils.renderBytes(response, r);
         } catch (Exception e) {
-            return R.error("节点执行失败，错误信息：\n" + ExceptionUtils.getStackTrace(e));
+            ProtobufUtils.renderBytes(response, R.error("节点执行失败，错误信息：\n" + ExceptionUtils.getStackTrace(e)));
         }
     }
 

@@ -2,8 +2,6 @@ package com.onlinecode.admin.interceptor;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson2.JSONObject;
-import com.google.protobuf.Message;
-import com.google.protobuf.util.JsonFormat;
 import com.onlinecode.admin.constant.ProcConstants;
 import com.onlinecode.admin.enums.AuthTypeEnum;
 import com.onlinecode.admin.enums.StatusEnum;
@@ -11,6 +9,7 @@ import com.onlinecode.admin.process.model.JsonVars;
 import com.onlinecode.admin.process.model.SysProcess;
 import com.onlinecode.admin.process.service.ProcessService;
 import com.onlinecode.admin.proto.RunProto;
+import com.onlinecode.admin.util.ProtobufUtils;
 import com.onlinecode.admin.web.R;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +42,21 @@ public class PermsInterceptor implements HandlerInterceptor {
                 .map(SysProcess::getProcCode).collect(Collectors.toSet());
         RepeatedlyRequestWrapper requestWrapper = new RepeatedlyRequestWrapper(request, response);
 
-        byte[] bytes = ("\n\r" + RepeatedlyRequestWrapper.getBodyString(requestWrapper)).getBytes();
-        RunProto.Run proto = RunProto.Run.parseFrom(bytes);
-
+        byte[] bytes = RepeatedlyRequestWrapper.getBodyBytes(requestWrapper);
+        RunProto.Run proto = null;
+        try {
+            proto = RunProto.Run.parseFrom(bytes);
+        } catch (Exception e) {
+            JSONObject jsonObject = JSONObject.parseObject(RepeatedlyRequestWrapper.getBodyString(requestWrapper));
+            if (jsonObject.containsKey("procCode")) {
+                proto = RunProto.Run.newBuilder()
+                        .setProcCode(jsonObject.getString("procCode"))
+                        .setTaskCode(jsonObject.getString("taskCode"))
+                        .setCmd(jsonObject.getString("cmd"))
+                        .setVars(JSONObject.toJSONString(jsonObject.get("getVar")))
+                        .build();
+            }
+        }
         // 登录页面免登录
         if (proto != null && ProcConstants.MENU_GET_BY_CODE.equals(proto.getProcCode())) {
             return true;
@@ -84,12 +94,13 @@ public class PermsInterceptor implements HandlerInterceptor {
             if (ProcConstants.PROC_RUN_URL.equals(url) && !procSet.isEmpty() && procSet.contains(procCode)) {
                 return true;
             }
-            renderString(response, JSONObject.toJSONString(R.forbidden()));
+            ProtobufUtils.renderBytes(response, R.forbidden());
             return false;
         }
-        renderString(response, JSONObject.toJSONString(R.unauthorized()));
+        ProtobufUtils.renderBytes(response, R.unauthorized());
         return false;
     }
+
 
     /**
      * 将字符串渲染到客户端

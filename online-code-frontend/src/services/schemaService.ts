@@ -31,7 +31,7 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
       code: scenarioName
     })
   }
-  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', headers: { "Content-Type": "application/x-protobuf" }, data: data})
+  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', headers: { "Content-Type": "application/octet-stream" }, data: data})
     .then((res: any) => {
       if (res.status === 200 && res.data && res.data.code === 200 && res.data.data) {
         schema = JSON.parse(res.data.data.schema_json);
