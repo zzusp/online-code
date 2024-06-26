@@ -58,7 +58,7 @@ public class CronConfig implements SchedulingConfigurer {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
         // 设置核心线程数等于系统核数--8核
         int availableProcessors = Runtime.getRuntime().availableProcessors();
-        taskScheduler.setPoolSize(availableProcessors * 2);
+        taskScheduler.setPoolSize(availableProcessors * 2 + 1);
         // 设置线程活跃时间（秒）
         taskScheduler.setAwaitTerminationSeconds(15 * 60);
         // 线程满了之后由调用者所在的线程来执行
