@@ -15,6 +15,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author 孙鹏
+ * @description 默认sql执行器
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public class DefaultSqlRunner implements SqlRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultSqlRunner.class);

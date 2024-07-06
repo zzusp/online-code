@@ -11,6 +11,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.PageInterceptor;
 import com.onlinecode.admin.constant.FlowConstants;
+import com.onlinecode.admin.enums.IdKeyEnum;
 import com.onlinecode.admin.exception.BusinessException;
 import com.onlinecode.admin.process.dao.ProcessMapper;
 import com.onlinecode.admin.process.dao.ProcessTaskMapper;
@@ -145,7 +146,7 @@ public class ProcessServiceImpl implements ProcessService {
                 if (sqlSession.getMapper(ProcessMapper.class).getByProcCode(procCode) != null) {
                     throw new BusinessException("编码已存在");
                 }
-                process.setId(idGen.get("sys_process").getId());
+                process.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
                 process.setCreateTime(LocalDateTime.now());
                 sqlSession.getMapper(ProcessMapper.class).insert(process);
             } else {
@@ -156,7 +157,7 @@ public class ProcessServiceImpl implements ProcessService {
                 sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
                 for (SysProcessTask task : process.getTasks()) {
                     if (task.getId() == null) {
-                        task.setId(idGen.get("sys_process").getId());
+                        task.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
                     }
                     // 编译检查
                     if (StringUtils.isNoneBlank(task.getExecuteCmd())) {
@@ -194,7 +195,7 @@ public class ProcessServiceImpl implements ProcessService {
             if (sqlSession.getMapper(ProcessMapper.class).getByProcCode(procCode) != null) {
                 throw new BusinessException("编码已存在");
             }
-            process.setId(idGen.get("sys_process").getId());
+            process.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
             process.setCreateTime(LocalDateTime.now());
             process.setBpmn(FlowUtils.replaceProcCode(from.getBpmn(), procCode));
             // 入库
@@ -203,7 +204,7 @@ public class ProcessServiceImpl implements ProcessService {
             List<SysProcessTask> tasks = sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(fromCode);
             if (tasks != null && tasks.size() > 0) {
                 for (SysProcessTask task : tasks) {
-                    task.setId(idGen.get("sys_process").getId());
+                    task.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
                     task.setProcCode(procCode);
                 }
                 // 节点入库

@@ -6,6 +6,12 @@ import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author 孙鹏
+ * @description 自定义Sql执行器
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public interface SqlRunner extends Closeable {
 
     List<Map<String, Object>> selectList(String sql);

@@ -3,6 +3,12 @@ package com.onlinecode.admin.process.model;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * @author 孙鹏
+ * @description 执行参数
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public class RunParam implements Serializable {
 
     private static final long serialVersionUID = 7829125842083645635L;

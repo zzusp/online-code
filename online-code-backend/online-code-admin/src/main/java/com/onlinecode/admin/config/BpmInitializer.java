@@ -1,4 +1,4 @@
-package com.onlinecode.admin.mock;
+package com.onlinecode.admin.config;
 
 import com.alibaba.compileflow.engine.BpmnProcessEngineFactory;
 import com.alibaba.compileflow.engine.process.impl.BpmnStringProcessEngineImpl;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -25,7 +24,6 @@ import java.util.List;
  * @date Created in 17:57 2023/2/24
  * @modified By
  */
-@Component
 @Configuration
 public class BpmInitializer implements InitializingBean, ApplicationContextAware {
 

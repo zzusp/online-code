@@ -5,6 +5,12 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * @author 孙鹏
+ * @description 编排流程节点Mapper
+ * @date Created in 10:17 2024/6/5
+ * @modified By
+ */
 public interface ProcessTaskMapper {
 
     @Select("SELECT id, proc_code, task_code, task_name, execute_cmd FROM sys_process_task")

@@ -1,23 +1,25 @@
-package com.onlinecode.admin.process.model;
+package com.onlinecode.admin.cron.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author 孙鹏
- * @description 编排流程实体
+ * @description 定时任务实体类
  * @date Created in 10:17 2024/6/5
  * @modified By
  */
-public class SysProcess implements Serializable {
+public class SysCron implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String menuCode;
+    private String cronCode;
+    private String cronName;
+    private String cronTxt;
     private String procCode;
-    private String procName;
-    private String bpmn;
-    private String auth;
+    private String executeParam;
+    private String executeTimeout;
     private String status;
     private LocalDateTime createTime;
     private String createBy;
@@ -26,30 +28,26 @@ public class SysProcess implements Serializable {
     private String remark;
     private String delFlag;
 
-    private List<SysProcessTask> tasks;
-    /**
-     * 拷贝来源流程编码
-     */
-    private String copyProcCode;
-
-    public SysProcess() {
+    public SysCron() {
     }
 
-    public SysProcess(Long id, String menuCode, String procCode, String procName, String bpmn, String auth,
-                      String status, LocalDateTime createTime, String createBy, LocalDateTime updateTime,
-                      String updateBy, String remark) {
+    public SysCron(Long id, String cronCode, String cronName, String cronTxt, String procCode, String executeParam,
+                   String executeTimeout, String status, LocalDateTime createTime, String createBy,
+                   LocalDateTime updateTime, String updateBy, String remark, String delFlag) {
         this.id = id;
-        this.menuCode = menuCode;
+        this.cronCode = cronCode;
+        this.cronName = cronName;
+        this.cronTxt = cronTxt;
         this.procCode = procCode;
-        this.procName = procName;
-        this.bpmn = bpmn;
-        this.auth = auth;
+        this.executeParam = executeParam;
+        this.executeTimeout = executeTimeout;
         this.status = status;
         this.createTime = createTime;
         this.createBy = createBy;
         this.updateTime = updateTime;
         this.updateBy = updateBy;
         this.remark = remark;
+        this.delFlag = delFlag;
     }
 
     public Long getId() {
@@ -60,12 +58,28 @@ public class SysProcess implements Serializable {
         this.id = id;
     }
 
-    public String getMenuCode() {
-        return menuCode;
+    public String getCronCode() {
+        return cronCode;
     }
 
-    public void setMenuCode(String menuCode) {
-        this.menuCode = menuCode;
+    public void setCronCode(String cronCode) {
+        this.cronCode = cronCode;
+    }
+
+    public String getCronName() {
+        return cronName;
+    }
+
+    public void setCronName(String cronName) {
+        this.cronName = cronName;
+    }
+
+    public String getCronTxt() {
+        return cronTxt;
+    }
+
+    public void setCronTxt(String cronTxt) {
+        this.cronTxt = cronTxt;
     }
 
     public String getProcCode() {
@@ -76,28 +90,20 @@ public class SysProcess implements Serializable {
         this.procCode = procCode;
     }
 
-    public String getProcName() {
-        return procName;
+    public String getExecuteParam() {
+        return executeParam;
     }
 
-    public void setProcName(String procName) {
-        this.procName = procName;
+    public void setExecuteParam(String executeParam) {
+        this.executeParam = executeParam;
     }
 
-    public String getBpmn() {
-        return bpmn;
+    public String getExecuteTimeout() {
+        return executeTimeout;
     }
 
-    public void setBpmn(String bpmn) {
-        this.bpmn = bpmn;
-    }
-
-    public String getAuth() {
-        return auth;
-    }
-
-    public void setAuth(String auth) {
-        this.auth = auth;
+    public void setExecuteTimeout(String executeTimeout) {
+        this.executeTimeout = executeTimeout;
     }
 
     public String getStatus() {
@@ -154,21 +160,5 @@ public class SysProcess implements Serializable {
 
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag;
-    }
-
-    public List<SysProcessTask> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<SysProcessTask> tasks) {
-        this.tasks = tasks;
-    }
-
-    public String getCopyProcCode() {
-        return copyProcCode;
-    }
-
-    public void setCopyProcCode(String copyProcCode) {
-        this.copyProcCode = copyProcCode;
     }
 }
