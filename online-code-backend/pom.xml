@@ -37,7 +37,7 @@
         <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
         <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
         <redisson.boot.version>3.18.0</redisson.boot.version>
-        <fastjson2.version>2.0.24</fastjson2.version>
+        <fastjson2.version>2.0.44</fastjson2.version>
         <junit.version>4.12</junit.version>
         <slow-sql-monitor.version>1.0.2</slow-sql-monitor.version>
         <elasticsearch.version>7.17.15</elasticsearch.version>
