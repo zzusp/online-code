@@ -1,6 +1,7 @@
 // import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler';
 
 import {createFetchHandler} from "./fetchHandler";
+import * as Next from '@alifd/next';
 
 const appHelper = {
   requestHandlersMap: {
@@ -12,7 +13,14 @@ const appHelper = {
     getBcrypt: () => { console.log(`not set Bcrypt`) },
     getBase64: () => { console.log(`not set Base64`) },
     getMessage: () => { console.log(`not set Message`) },
-    renderer: (page: string, onRender?: Function) => { console.log(`not set renderer`) }
+    renderer: (page: string, onRender?: Function) => { console.log(`not set renderer`) },
+    importDependency: (dependency: string = 'next') => {
+      console.log(`importDependency method support dependency: 'next'`);
+      if (dependency === 'next') {
+        return Next
+      }
+      return null;
+    }
   },
   constants: {
     ConstantA: 'ConstantA',
