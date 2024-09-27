@@ -27,6 +27,9 @@ import './global.scss';
 import PagesPlugin from './plugins/plugin-pages';
 import {createFetchHandler} from "./fetchHandler";
 
+// 第三方插件
+// import 'boxicons';
+
 async function registerPlugins() {
   await plugins.register(InjectPlugin);
   // 页面管理

@@ -54,7 +54,8 @@
     "@alifd/next": "^1.25.27",
     "react": "^16.x",
     "react-dom": "^16.x",
-    "@babel/runtime": "^7.0.0"
+    "@babel/runtime": "^7.0.0",
+    "boxicons": "^2.1.4"
   },
   "devDependencies": {
     "@alib/build-scripts": "^0.1.3",
@@ -81,5 +82,6 @@
   "lcMeta": {
     "type": "component"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://unpkg.com/plugin-custom-renderer@0.1.0/build/index.html"
 }
