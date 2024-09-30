@@ -54,8 +54,7 @@
     "@alifd/next": "^1.25.27",
     "react": "^16.x",
     "react-dom": "^16.x",
-    "@babel/runtime": "^7.0.0",
-    "boxicons": "^2.1.4"
+    "@babel/runtime": "^7.0.0"
   },
   "devDependencies": {
     "@alib/build-scripts": "^0.1.3",
