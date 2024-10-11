@@ -7,10 +7,11 @@ import ReactDOM from "react-dom";
 import { renderToString } from 'react-dom/server'
 import React from "react";
 import Renderer from "../../components/pages/renderer";
+import JsxRenderer from "../../components/pages/JxsRender";
 const EditorInitPlugin = (ctx: IPublicModelPluginContext, options: any) => {
   return {
-    async init() {
-      const { material, project, config } = ctx;
+    init: async function () {
+      const {material, project, config} = ctx;
       const scenarioName = config.get('scenarioName') || options['scenarioName'];
       const scenarioDisplayName = options['displayName'] || scenarioName;
       const scenarioInfo = options['info'] || {};
@@ -25,8 +26,16 @@ const EditorInitPlugin = (ctx: IPublicModelPluginContext, options: any) => {
       const schema = await getProjectSchema(scenarioName);
       // 加载 schema
       project.importSchema(schema as any);
+
+      const render = ReactDOM.render
+
       appHelper.utils.renderer = (page) => {
-        return <Renderer page={page} />
+        // 判断page是否是string
+        if (typeof page === 'string') {
+          return <Renderer page={page}/>
+        } else {
+          return <JsxRenderer onRender={(ref: object) => {ReactDOM.render(page, ref.current)}}/>;
+        }
       };
     },
   };

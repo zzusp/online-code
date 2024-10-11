@@ -15,6 +15,8 @@ import {createFetch} from "../../fetchHandler";
 import styles from './index.module.css';
 import {DEFAULT_LABEL_SIZE} from "bpmn-js/lib/util/LabelUtil";
 import height = DEFAULT_LABEL_SIZE.height;
+import ReactDOM from "react-dom";
+import JsxRenderer from "./JxsRender";
 
 const Pages = () => {
 
@@ -31,7 +33,12 @@ const Pages = () => {
   appHelper.utils.getBase64 = () => { return Base64 };
   appHelper.utils.getMessage = () => { return Message };
   appHelper.utils.renderer = (page) => {
-    return <Renderer page={page} />
+    // 判断page是否是string
+    if (typeof page === 'string') {
+      return <Renderer page={page} />
+    } else {
+      return <JsxRenderer onRender={(ref: object) => {ReactDOM.render(page, ref.current)}}/>;
+    }
   };
 
   useEffect(() => {

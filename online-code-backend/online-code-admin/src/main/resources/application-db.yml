@@ -5,7 +5,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://124.222.119.198:3306/onlinecode?allowMultiQueries=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
-    password: fEJ0CnDop54mQYB!
+    password: Bro303@!
     # 初始连接数
     initialSize: 5
     # 最小连接池数量
@@ -49,7 +49,7 @@ slow-sql-monitor:
   slow-millis: 1000
   log-slow-sql: false
   elasticsearch:
-    enabled: true
+    enabled: false
     uris: http://127.0.0.1:9200
     username: elastic
     password: 123456
