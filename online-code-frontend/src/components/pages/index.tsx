@@ -16,7 +16,8 @@ import styles from './index.module.css';
 import {DEFAULT_LABEL_SIZE} from "bpmn-js/lib/util/LabelUtil";
 import height = DEFAULT_LABEL_SIZE.height;
 import ReactDOM from "react-dom";
-import JsxRenderer from "./JxsRender";
+import JsxRenderer from "./jxs-render";
+import BoxIcon from "../third/box-icon";
 
 const Pages = () => {
 
@@ -73,7 +74,8 @@ const Pages = () => {
       if (m.type === '0') {
         arr.push(<Nav.SubNav label={m.name}>{toNav(m.children)}</Nav.SubNav>);
       } else if (m.type === '1') { // 菜单
-        let icon = <Icon type={m.icon} style={{marginRight: '8px'}} size={'small'}/>;
+        // let icon = <Icon type={m.icon} style={{marginRight: '8px'}} size={'small'}/>;
+        let icon = <BoxIcon name={'BiHomeSmile'} style={{position: 'relative', top: '4.5px', marginRight: '8px'}} size={'20'}/>;
         // let icon = m.icon;
         if (m.mode === '0') { // schema
           arr.push(<Nav.Item icon={icon} key={m.code}><Link to={`/pages/` + m.code}>{m.name}</Link></Nav.Item>);

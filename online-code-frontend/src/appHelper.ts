@@ -2,7 +2,8 @@
 
 import {createFetchHandler} from "./fetchHandler";
 import * as Next from '@alifd/next';
-import * as BoxIcon from "react-icons/bi";
+// import * as BoxIcon from "react-icons/bi";
+import BoxIcon from "./components/third/box-icon";
 
 const appHelper = {
   requestHandlersMap: {
@@ -16,7 +17,7 @@ const appHelper = {
     getMessage: () => { console.log(`not set Message`) },
     renderer: (page: string | object, onRender?: Function) => { console.log(`not set renderer`) },
     importDependency: (dependency: string = 'Next') => {
-      console.log(`importDependency method support dependency: 'Next'`);
+      console.log(`importDependency method support dependency: 'Next','BoxIcon'`);
       if (dependency === 'Next') {
         return Next
       } else if (dependency === 'BoxIcon') {

@@ -7,7 +7,7 @@ import ReactDOM from "react-dom";
 import { renderToString } from 'react-dom/server'
 import React from "react";
 import Renderer from "../../components/pages/renderer";
-import JsxRenderer from "../../components/pages/JxsRender";
+import JsxRenderer from "../../components/pages/jxs-render";
 const EditorInitPlugin = (ctx: IPublicModelPluginContext, options: any) => {
   return {
     init: async function () {

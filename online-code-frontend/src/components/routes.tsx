@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import React from "react";
 
 import Pages from "./pages";
-import ProcessDesign from "./ProcessDesign";
+import ProcessDesign from "./process-design";
 
 const router = createHashRouter([
   {
