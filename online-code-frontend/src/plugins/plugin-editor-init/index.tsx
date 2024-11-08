@@ -34,7 +34,7 @@ const EditorInitPlugin = (ctx: IPublicModelPluginContext, options: any) => {
         if (typeof page === 'string') {
           return <Renderer page={page}/>
         } else {
-          return <JsxRenderer onRender={(ref: object) => {ReactDOM.render(page, ref.current)}}/>;
+          return <JsxRenderer jsx={page} />;
         }
       };
     },

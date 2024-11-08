@@ -17,11 +17,12 @@ const appHelper = {
     getMessage: () => { console.log(`not set Message`) },
     renderer: (page: string | object, onRender?: Function) => { console.log(`not set renderer`) },
     importDependency: (dependency: string = 'Next') => {
-      console.log(`importDependency method support dependency: 'Next','BoxIcon'`);
       if (dependency === 'Next') {
         return Next
       } else if (dependency === 'BoxIcon') {
         return BoxIcon;
+      } else {
+        console.log(`importDependency method support dependency: 'Next','BoxIcon'`);
       }
       return null;
     }

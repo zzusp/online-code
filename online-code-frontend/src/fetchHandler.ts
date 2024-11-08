@@ -19,6 +19,8 @@ export function createFetchHandler(config?: Record<string, unknown>) {
     return await createFetch(requestConfig);
   };
 }
+// 使用全局变量标记是否已经提示过未登录
+let hasShownUnauthorizedMessage = false;
 
 // config 留着扩展
 export async function createFetch(options: RequestOptions) {
@@ -28,24 +30,29 @@ export async function createFetch(options: RequestOptions) {
         if (res.data.code === 200) {
           return resolve(res);
         } else if (res.data.code === 401) {
-          Dialog.confirm({
-            title: '系统提示',
-            content: '登录状态已过期，您可以继续留在该页面，或者重新登录',
-            okProps: { children: '重新登录' },
-            cancelProps: { children: '取消' },
-            onOk: () => { location.href = '/#/pages/login' },
-            onCancel: () => {},
-            messageProps: {
-              v2: true,
-              type: 'warning'
-            }
-          });
+          // 判断是否已经弹出过未登录提示
+          if (!hasShownUnauthorizedMessage) {
+            hasShownUnauthorizedMessage = true;
+            Dialog.confirm({
+              title: '系统提示',
+              content: '登录状态已过期，您可以继续留在该页面，或者重新登录',
+              okProps: { children: '重新登录' },
+              cancelProps: { children: '取消' },
+              onOk: () => { location.href = '/#/pages/login' },
+              onCancel: () => {},
+              afterClose: () => { hasShownUnauthorizedMessage = false },
+              messageProps: {
+                v2: true,
+                type: 'warning'
+              }
+            });
+          }
         } else if (res.data.code === 403 || res.data.code === 500) {
           Message.error(res.data.message);
           return resolve(res);
         }
       } else {
-        console.log('res error', res)
+        console.log('res error', res);
         Message.error('后端接口连接异常');
       }
     }).catch((res: any) => {
