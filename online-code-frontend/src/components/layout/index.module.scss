@@ -1,15 +1,33 @@
-.headerAvatar {
+:global .header-avatar {
   height: 100%;
-  padding: 10px;
+  padding: 6px 10px 6px 10px;
+  margin-left: 10px;
+  margin-right: 4px;
   cursor: pointer;
+  .account-name {
+    position: relative;
+    top: 2px;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  /* 悬浮 */
+  &:hover {
+    background: rgb(236, 242, 255) !important;
+    color: #4494f9;
+    border-radius: 7px;
+  }
 }
 
 .avatarPopup {
-  min-width: 210px;
+  min-width: 230px;
   padding: 4px 0;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+  margin-top: 8px;
+  background: var(--color-white, #fff);
+  box-shadow: rgba(145, 158, 171, 0.3) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
+  max-height: calc(100% - 96px);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 7px;
+  outline: 0px;
 }
 
 .next-shell-action .next-avatar-small {
@@ -21,47 +39,37 @@
   border: 0 !important;
   border-radius: unset !important;
   border-top: 1px solid #dcdee3 !important;
+  padding: 8px 0 4px 0 !important;
 }
 
 .menu :global .next-menu-item {
   color: var(--color-text1-3, #666);
+  padding: 8px 20px;
 }
 
-//.left-menu {
-//
-//  //.next-shell-aside.next-shell-navigation :not(.next-shell-collapse) {
-//  //  width: 240px !important;
-//  //}
-//  //.next-shell-collapse {
-//  //  width: 5.25rem !important;
-//  //}
-//
-//  .next-menu {
-//
-//    .next-shell-light .next-shell-aside.next-shell-navigation :not(.next-shell-collapse) {
-//      width: 240px !important;
-//    }
-//    .next-shell-light .next-shell-aside.next-shell-navigation.next-shell-collapse {
-//      width: 5.25rem !important;
-//    }
-//    .next-menu-item.next-nav-item.next-selected {
-//      background: #5584ff1a !important;
-//      margin: 0 8px 0 8px !important;
-//      color: #5584ff !important;
-//      border-radius: .375rem !important;
-//      //width: 240px !important;
-//    }
-//  }
-//}
-
-
-
 .menu :global .next-menu-item-inner {
-  height: 36px;
+  height: 38px;
+  font-size: .9375rem;
+  font-weight: 400;
+  hyphens: auto;
+  letter-spacing: .009375em;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+  word-break: normal;
+
+  .box-icon {
+    margin: 0 18px 0 6px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+  }
 }
 
 .menu :global .next-icon {
-  margin-right: 8px;
+  margin: 0 18px 0 8px;
 }
 
 .profile {

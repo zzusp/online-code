@@ -1,8 +1,15 @@
 .noticeIcon {
   width: 40px;
-  line-height: 50px;
+  line-height: 40px;
+  margin: 7px 0 7px 0;
   text-align: center;
   cursor: pointer;
+  /* 悬浮 */
+  &:hover {
+    background: rgb(236, 242, 255) !important;
+    color: #4494f9;
+    border-radius: 50%;
+  }
 }
 
 .close {
@@ -11,30 +18,58 @@
 }
 
 .noticeContainer {
-  width: 270px;
+  width: 320px;
   background: var(--color-white, #fff);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
-}
+  margin-top: 8px;
+  box-shadow: rgba(145, 158, 171, 0.3) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
+  max-height: calc(100% - 96px);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 7px;
+  outline: 0px;
 
-.noticeContainer :global .next-list-header {
-  margin: 0 12px;
-}
-.noticeContainer :global .next-list-footer {
-  border: 0;
-}
+  :global .next-list-header {
+    height: 48px;
+    align-content: center;
+    margin: 0 16px;
 
-.noticeContainer :global .next-list-item-title,
-.noticeContainer :global .next-list-item {
-  font-weight: normal;
-}
+    > div {
+      > h4 {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2rem !important;
+      }
+      > span {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        line-height: 1.2rem !important;
+        color: var(--color-text1-4, #333);
+      }
+    }
+  }
+  :global .next-list-footer {
+    border: 0;
+  }
 
-.noticeContainer :global .next-list-item {
-  padding: 8px 12px;
-  font-size: var(--font-size-caption, 12px);
+  :global .next-list-items {
+    padding: 8px 0;
+    margin: 0 16px;
+    border-bottom: 1px solid #dcdee3;
+  }
+
+  :global .next-list-item-title,
+  :global .next-list-item {
+    font-weight: normal;
+  }
+
+  :global .next-list-item {
+    padding: 8px 12px;
+    font-size: var(--font-size-caption, 12px);
+  }
 }
 
 .noticeItem:hover {
   background: var(--color-fill1-2, #f2f3f7);
+  border-radius: 7px;
 }
 
 .noticeItem:hover :global .close {
@@ -43,9 +78,9 @@
 
 .title,
 .footer {
-  height: 16px;
-  font-weight: normal;
-  line-height: 16px;
+  /*height: 16px;*/
+  /*font-weight: normal;*/
+  /*line-height: 16px;*/
 }
 
 .title h4 {
@@ -58,11 +93,16 @@
 
 .footer {
   text-align: center;
+  align-content: center;
+  height: 28px;
+  line-height: 1.2rem !important;
 }
 
 .footer a {
   color: var(--color-text1-3, #666);
-  font-size: var(--font-size-caption, 12px);
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  /*font-size: var(--font-size-caption, 12px);*/
   cursor: pointer;
 }
 

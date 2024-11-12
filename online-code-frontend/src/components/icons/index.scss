@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   padding: 16px;
-  background: #fafafa;
+  background: #ffffff;
   box-sizing: border-box;
   min-height: 100%;
   overflow: auto;
@@ -28,10 +28,18 @@
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.3s ease-in-out;
+    //transition: background 0.3s ease-in-out;
 
     &:hover {
-      background: #e6f7ff;
+      background: rgb(236, 242, 255) !important;
+      border-radius: 7px;
+
+      .icon {
+        color: #4494f9;
+      }
+      .icon-name {
+        color: #4494f9;
+      }
     }
 
     &.active {

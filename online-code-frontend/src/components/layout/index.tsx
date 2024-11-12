@@ -10,6 +10,8 @@ import {createFetch} from "../../fetchHandler";
 
 import styles from './index.module.scss';
 import BoxIcon from "../third/box-icon";
+import { DEFAULT_LABEL_SIZE } from "bpmn-js/lib/util/LabelUtil";
+import height = DEFAULT_LABEL_SIZE.height;
 
 const Layout = () => {
 
@@ -95,6 +97,31 @@ const Layout = () => {
     <>
       <style>
         {`
+          /* 顶部 */
+          .next-shell-header {
+            border-bottom: unset;
+
+            .next-shell-branding {
+              height: 100%;
+              margin-left: 6px;
+              /* 菜单折叠按钮 */
+              .nav-trigger {
+                width: 38px;
+                height: 38px;
+                // font-size: 1.5rem;
+                /* 悬浮在菜单上 */
+                &:hover {
+                  background: rgb(236, 242, 255) !important;
+                  color: #4494f9;
+                  border-radius: 50%;
+                }
+              }
+              .app-name {
+                margin-left: 10px;
+                font-size: 16px;
+              }
+            }
+          }
           .page {
             /** 菜单展开 */
             .next-aside-navigation > .next-shell-navigation {
@@ -174,27 +201,27 @@ const Layout = () => {
         >
           <Shell.Branding>
             <div className="rectangular"></div>
-            <span style={{marginLeft: 10}}>App Name</span>
+            <span className="app-name">App Name</span>
           </Shell.Branding>
           <Shell.Navigation direction="hoz">
           </Shell.Navigation>
 
           <Shell.Action>
-            <Search type="normal" shape="simple" placeholder="请输入" style={{width: "200px", marginRight: '10px'}}/>
+            {/*<Search type="normal" shape="simple" placeholder="请输入" style={{width: "200px", marginRight: '10px'}}/>*/}
             <Notice/>
-            <div style={{height: '100%', padding: '10px', display: 'flex'}}>
-              <img src="./img/github.png"
-                   aria-haspopup="true" aria-expanded="false"
-                   style={{height: '22px', position: 'relative', top: '-2px'}}
-                   onClick={() => {
-                     toGithub()
-                   }}/>
-            </div>
+            {/*<div style={{height: '100%', padding: '10px', display: 'flex'}}>*/}
+            {/*  <img src="./img/github.png"*/}
+            {/*       aria-haspopup="true" aria-expanded="false"*/}
+            {/*       style={{height: '22px', position: 'relative', top: '-2px'}}*/}
+            {/*       onClick={() => {*/}
+            {/*         toGithub()*/}
+            {/*       }}/>*/}
+            {/*</div>*/}
             <Popup
               trigger={
-                <div className={styles.headerAvatar}>
+                <div className="header-avatar">
                   <Avatar size="small" src={"./img/TB1.ZBecq67gK0jSZFHXXa9jVXa-904-826.png"} alt="用户头像"/>
-                  <span style={{marginLeft: 10}}>{user?.nickName}</span>
+                  <span className="account-name">{user?.nickName}</span>
                 </div>
               }
               triggerType="click"
@@ -210,10 +237,11 @@ const Layout = () => {
                   </div>
                 </div>
                 <Menu className={styles.menu}>
-                  <Menu.Item><Icon size="small" type="account"/>个人设置</Menu.Item>
-                  <Menu.Item><Icon size="small" type="set"/>系统设置</Menu.Item>
-                  <Menu.Item onClick={() => clearCache()}><Icon size="small" type="ashbin"/>清理缓存</Menu.Item>
-                  <Menu.Item onClick={() => logout()}><Icon size="small" type="exit"/>退出</Menu.Item>
+                  <Menu.Item><BoxIcon name={'BiUser'} size={'20'} className={'box-icon'} />个人设置</Menu.Item>
+                  <Menu.Item><BoxIcon name={'BiCog'} size={'20'} className={'box-icon'} />系统设置</Menu.Item>
+                  <Menu.Item onClick={() => clearCache()}><BoxIcon name={'BiBrushAlt'} size={'20'} className={'box-icon'} />清理缓存</Menu.Item>
+                  <Divider style={{margin: '8px 0'}} />
+                  <Menu.Item onClick={() => logout()}><BoxIcon name={'BiLogOut'} size={'20'} className={'box-icon'} />退出</Menu.Item>
                 </Menu>
               </div>
             </Popup>

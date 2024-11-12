@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Icon, Badge, Overlay, Avatar, Message, List } from '@alifd/next';
 import styles from './index.module.css';
+import BoxIcon from "../../third/box-icon";
 
 export interface INotcieItem {
   id: number;
@@ -53,7 +54,8 @@ const Notice: React.FC<NoticeProps> = ({ noticeList }) => {
       trigger={(
         <div className={styles.noticeIcon}>
           <Badge count={badgeCount}>
-            <Icon type="email" size={'medium'} />
+            {/*<Icon type="email" size={'medium'} />*/}
+            <BoxIcon name={'BiBell'} size={'20'} />
           </Badge>
         </div>
       )}
@@ -65,13 +67,13 @@ const Notice: React.FC<NoticeProps> = ({ noticeList }) => {
         className={styles.noticeContainer}
         header={(
           <div className={styles.title}>
-            <h4>通知</h4>
-            <span className={styles.clear} onClick={clearNotice}>清空通知</span>
+            <h4>Notifications</h4>
+            <span className={styles.clear} onClick={clearNotice}>Clear</span>
           </div>
         )}
         footer={(
           <div className={styles.footer}>
-            <a onClick={viewMore}>查看更多</a>
+            <a onClick={viewMore}>More</a>
           </div>
         )}
       >
@@ -91,7 +93,7 @@ const Notice: React.FC<NoticeProps> = ({ noticeList }) => {
         })}
         {renderList.length === 0 && (
           <List.Item className={styles.empty}>
-            你已查看所有通知
+            No More
           </List.Item>
         )}
       </List>
