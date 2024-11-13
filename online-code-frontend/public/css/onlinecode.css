@@ -32,3 +32,29 @@
   background-color: rgba(0,0,0,.3);
   border-radius: 5px;
 }
+
+.next-table td .next-table-cell-wrapper .next-icon-arrow-right.next-table-tree-arrow .next-icon-remote, .next-table td .next-table-cell-wrapper {
+  display: flex;                /* 使用 flex 布局，将子元素放在一行 */
+  align-items: center;          /* 垂直居中对齐 */
+
+  > i {
+    flex-shrink: 0;               /* 固定宽度，不允许缩小 */
+  }
+
+  > div {
+    flex: 1;                      /* 占满剩余空间 */
+    overflow: hidden;             /* 隐藏超出内容 */
+    white-space: nowrap;          /* 禁止换行 */
+    text-overflow: ellipsis;      /* 超出部分显示省略号 */
+  }
+}
+
+.next-table td .next-table-cell-wrapper .next-icon-arrow-right.next-table-tree-arrow .next-icon-remote, .next-table td .next-table-cell-wrapper .next-icon.next-xs.next-table-tree-placeholder {
+  width: 12px;
+  margin-right: 8px;
+}
+
+.next-table td .next-table-cell-wrapper .next-icon-arrow-right.next-table-tree-arrow .next-icon-remote, .next-table td .next-table-cell-wrapper .next-table-tree-arrow:before {
+  font-size: 8px !important;
+  font-weight: 600;
+}
