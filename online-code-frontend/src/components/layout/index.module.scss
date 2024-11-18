@@ -40,17 +40,22 @@
   border-radius: unset !important;
   border-top: 1px solid #dcdee3 !important;
   padding: 8px 0 4px 0 !important;
+  margin: 0 16px !important;
 }
 
 .menu :global .next-menu-item {
   color: var(--color-text1-3, #666);
-  padding: 8px 20px;
+  padding: 0 4px !important;
+  &:not(.next-disabled):hover {
+    border-radius: 7px;
+  }
 }
 
 .menu :global .next-menu-item-inner {
   height: 38px;
   font-size: .9375rem;
   font-weight: 400;
+  align-content: center;
   hyphens: auto;
   letter-spacing: .009375em;
   overflow: hidden;

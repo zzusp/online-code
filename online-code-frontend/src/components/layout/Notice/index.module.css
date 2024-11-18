@@ -99,7 +99,7 @@
 }
 
 .footer a {
-  color: var(--color-text1-3, #666);
+  color: var(--color-text1-4, #333);
   font-size: 1rem !important;
   font-weight: 600 !important;
   /*font-size: var(--font-size-caption, 12px);*/
@@ -113,7 +113,7 @@
 
 .clear {
   float: right;
-  color: var(--color-text1-3, #666);
+  color: var(--color-text1-4, #333);
   font-size: var(--font-size-caption, 12px);
   cursor: pointer;
 }

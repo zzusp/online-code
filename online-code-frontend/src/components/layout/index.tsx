@@ -111,7 +111,7 @@ const Layout = () => {
                 // font-size: 1.5rem;
                 /* 悬浮在菜单上 */
                 &:hover {
-                  background: rgb(236, 242, 255) !important;
+                  // background: rgb(236, 242, 255) !important;
                   color: #4494f9;
                   border-radius: 50%;
                 }
@@ -233,7 +233,7 @@ const Layout = () => {
                   </div>
                   <div className={styles.content}>
                     <h4>{user?.nickName}</h4>
-                    <span>{'645541506@qq.com'}</span>
+                    <span>{'peng_zzu@163.com'}</span>
                   </div>
                 </div>
                 <Menu className={styles.menu}>
@@ -254,7 +254,7 @@ const Layout = () => {
             </Nav>
           </Shell.Navigation>
 
-          <Shell.Content>
+          <Shell.Content style={{padding: '0'}}>
             <Outlet></Outlet>
           </Shell.Content>
         </Shell>

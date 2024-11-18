@@ -24,13 +24,19 @@ const defaultNoticeList: INotcieItem[] = [
     avatar: 'https://img.alicdn.com/tfs/TB1.ZBecq67gK0jSZFHXXa9jVXa-904-826.png',
     message: '如何查看新增页面？',
   },
+  {
+    id: 3,
+    name: 'Mark',
+    avatar: 'https://img.alicdn.com/tfs/TB1.ZBecq67gK0jSZFHXXa9jVXa-904-826.png',
+    message: '如何修改新增页面的样式？',
+  },
 ];
 export interface NoticeProps {
   noticeList?: INotcieItem[];
 }
 
 const Notice: React.FC<NoticeProps> = ({ noticeList }) => {
-  const [badgeCount, setBageCount] = useState(2);
+  const [badgeCount, setBageCount] = useState(3);
   const [readList, setReadList] = useState<number[]>([]);
 
   function markAsRead(id: number) {
@@ -93,7 +99,7 @@ const Notice: React.FC<NoticeProps> = ({ noticeList }) => {
         })}
         {renderList.length === 0 && (
           <List.Item className={styles.empty}>
-            No More
+            Empty
           </List.Item>
         )}
       </List>
