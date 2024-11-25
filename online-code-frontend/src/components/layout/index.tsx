@@ -116,9 +116,14 @@ const Layout = () => {
                   border-radius: 50%;
                 }
               }
+              .rectangular {
+                // width: 32px;
+                // height: 32px;
+                // background-image: url("favicon.icon");
+              }
               .app-name {
                 margin-left: 10px;
-                font-size: 16px;
+                font-size: 18px;
               }
             }
           }
