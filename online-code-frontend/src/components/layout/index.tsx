@@ -201,7 +201,7 @@ const Layout = () => {
         >
           <Shell.Branding>
             <div className="rectangular"></div>
-            <span className="app-name">App Name</span>
+            <span className="app-name">Codeva</span>
           </Shell.Branding>
           <Shell.Navigation direction="hoz">
           </Shell.Navigation>
