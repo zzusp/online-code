@@ -163,6 +163,8 @@ const Layout = () => {
               .next-menu-item-inner {
                 height: 45px;
                 font-size: 14px;
+                display: flex;
+                align-items: center;
               }
 
               /** 悬浮在菜单上 */
