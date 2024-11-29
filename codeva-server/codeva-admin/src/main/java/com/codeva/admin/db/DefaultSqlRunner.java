@@ -290,6 +290,8 @@ public class DefaultSqlRunner implements SqlRunner {
             log.warn("Please set page param first");
             return PageTable.empty();
         }
+        parameters.put("pageNum", pageNum);
+        parameters.put("pageSize", pageSize);
         String countSql = new CountSqlParser().getSimpleCountSql(sql);
         PageHelper dialect = new PageHelper();
         dialect.setProperties(pageProperties);

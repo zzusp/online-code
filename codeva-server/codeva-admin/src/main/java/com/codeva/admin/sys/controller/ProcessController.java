@@ -58,12 +58,12 @@ public class ProcessController {
         return R.ok(processService.run(param.getProcCode(), param.getVars()));
     }
 
-    @PostMapping("/runTask")
+    @PostMapping("/run-task")
     public R<Object> runTask(@RequestBody RunParam param) {
         return R.ok(processService.runTask(param.getProcCode(), param.getTaskCode(), param.getVars()));
     }
 
-    @PostMapping("/runCmd")
+    @PostMapping("/run-cmd")
     public R<Object> runCmd(@RequestBody RunParam param) {
         if (StringUtils.isBlank(param.getCmd())) {
             return R.error("代码不可为空");

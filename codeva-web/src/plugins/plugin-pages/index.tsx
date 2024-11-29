@@ -3,7 +3,7 @@ import React from 'react';
 import {Nav} from '@alifd/next';
 import './index.scss';
 import {getProjectSchema, getProjectSchemaFromDb} from 'src/services/schemaService';
-import {createFetch} from "../../fetchHandler";
+import { get } from "../../fetchHandler";
 
 const { Item } = Nav;
 
@@ -17,14 +17,9 @@ const PagesPlugin = (ctx: IPublicModelPluginContext) => {
       config.set('scenarioInfo', {});
 
       let menuNav: React.JSX.Element[] = [];
-      await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: {
-          procCode: 'menuList'
-        }})
-        .then((res: any) => {
-          if (res.status === 200 && res.data && res.data.code === 200) {
-            const menus = res.data.data;
+      await get('menuList').then((res: any) => {
+          const menus = res.data;
             menuNav = toNav(menus);
-          }
         })
         .catch((err: any) => {});
 

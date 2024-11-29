@@ -51,4 +51,17 @@ public class ApiController {
         return R.ok(processService.run(StringUtils.hyphenToCamel(procCode), vars));
     }
 
+    @DeleteMapping("/delete/{procCode}")
+    public R<Object> delete(@PathVariable String procCode, HttpServletRequest request) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        Map<String, Object> vars = new HashMap<>(8);
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            vars.put(entry.getKey(), entry.getValue()[0]);
+            if (entry.getValue().length > 1) {
+                return R.error("Multi-value is not supported");
+            }
+        }
+        return R.ok(processService.run(StringUtils.hyphenToCamel(procCode), vars));
+    }
+
 }

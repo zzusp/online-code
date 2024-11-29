@@ -1,6 +1,6 @@
 // import { createFetchHandler } from '@alilc/lowcode-datasource-fetch-handler';
 
-import {createFetchHandler} from "./fetchHandler";
+import { schema, get, post, createFetchHandler } from "./fetchHandler";
 import * as Next from '@alifd/next';
 // import * as BoxIcon from "react-icons/bi";
 import BoxIcon from "./components/third/box-icon";
@@ -8,6 +8,9 @@ import BoxIcon from "./components/third/box-icon";
 const appHelper = {
   requestHandlersMap: {
     fetch: createFetchHandler(),
+    schema: schema,
+    get: get,
+    post: post
   },
   utils: {
     demoUtil: (...params: any[]) => { console.log(`this is a demoUtil with params ${params}`) },

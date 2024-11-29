@@ -45,6 +45,7 @@ public class PermsInterceptor implements HandlerInterceptor {
             return true;
         }
         String url = request.getServletPath();
+        // API接口自己做权限校验
         if (url.startsWith(ProcConstants.API_URL)) {
             return true;
         }

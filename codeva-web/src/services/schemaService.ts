@@ -10,7 +10,7 @@ import {
 } from "./mockService";
 import { injectAssets, filterPackages } from '@alilc/lowcode-plugin-inject';
 import assets from '../services/assets.json';
-import {createFetch} from "../fetchHandler";
+import { post, schema } from "../fetchHandler";
 
 export const saveSchema = async (scenarioName: string = 'unknown') => {
   console.log('save', scenarioName);
@@ -24,25 +24,17 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
     return localValue;
   }
   // 缓存中没有，则直接查询数据库
-  let schema = undefined;
-  let data: any = {
-    procCode: 'menuGetByCode',
-    vars: {
-      code: scenarioName
-    }
-  }
-  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: data})
+  let schemaJson = undefined;
+  await schema(scenarioName)
     .then((res: any) => {
-      if (res.status === 200 && res.data && res.data.code === 200 && res.data.data) {
-        schema = JSON.parse(res.data.data.schema_json);
+      schemaJson = JSON.parse(res.data.schema_json);
         if ('login' !== scenarioName) {
           window.localStorage.setItem(getLSName(scenarioName), res.data.data.schema_json);
         }
-      }
     })
     .catch((err: any) => {
     });
-  return schema;
+  return schemaJson;
 }
 
 const setProjectSchemaToDb = async (scenarioName: string) => {
@@ -54,22 +46,15 @@ const setProjectSchemaToDb = async (scenarioName: string) => {
   const schema = JSON.stringify(project.exportSchema(IPublicEnumTransformStage.Save));
 
   let data: any = {
-    procCode: 'menuSaveSchema',
-    vars: {
-      code: scenarioName,
-      schema: schema
-    }
+    code: scenarioName,
+    schema: schema
   }
-  await createFetch({url: '/onlinecode-api/process/run', method: 'POST', data: data})
+  await post('menuSaveSchema', data)
     .then((res: any) => {
-      if (res.status === 200 && res.data && res.data.code === 200) {
-        // 删除浏览器本地缓存中的内容
+      // 删除浏览器本地缓存中的内容
         window.localStorage.removeItem(getLSName(scenarioName));
         window.localStorage.removeItem(getLSName(scenarioName, 'packages'));
         Message.success('成功保存到数据库');
-      } else {
-        Message.error('保存失败，错误信息：' + res.data.message);
-      }
     })
     .catch((err: any) => {
     });

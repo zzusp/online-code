@@ -19,7 +19,7 @@ class RunCode extends React.Component<any, any> {
       cmd: this.props?.code,
       vars: JSON.parse(this.state.inputVal)
     }
-    await createFetch({url: '/onlinecode-api/process/runCmd', method: 'POST', data: param})
+    await createFetch({url: '/onlinecode-api/process/run-cmd', method: 'POST', data: param})
       .then((res: any) => {
         console.log(res);
         if (res.status === 200 && res.data) {

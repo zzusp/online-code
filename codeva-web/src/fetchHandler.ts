@@ -4,6 +4,62 @@ import request from 'universal-request';
 import { RequestOptions, AsObject } from 'universal-request/lib/types';
 import {Message, Dialog} from "@alifd/next";
 
+// schema
+export function schema(code: string, params?: AsObject, headers?: AsObject) {
+  const requestConfig: RequestOptions = {
+    url: `/onlinecode-api/api/v1/schema/${code}`,
+    method: 'GET',
+    data: params,
+    headers: headers
+  };
+  return new Promise<any>(((resolve, reject) => {
+    createFetch(requestConfig).then(res => resolve(res.data));
+  }));
+}
+
+// get
+export function get(procCode: string, params?: AsObject, headers?: AsObject) {
+  const requestConfig: RequestOptions = {
+    url: `/onlinecode-api/api/v1/get/${procCode}`,
+    method: 'GET',
+    data: params,
+    headers: headers
+  };
+  return new Promise<any>(((resolve, reject) => {
+    createFetch(requestConfig).then(res => resolve(res.data));
+  }));
+}
+
+// post
+export function post(procCode: string, params?: AsObject, headers?: AsObject) {
+  let defaultHeaders = {
+    'Content-Type': 'application/json'
+  };
+  headers = Object.assign(defaultHeaders, headers);
+  const requestConfig: RequestOptions = {
+    url: `/onlinecode-api/api/v1/post/${procCode}`,
+    method: 'POST',
+    data: params,
+    headers: headers
+  };
+  return new Promise<any>(((resolve, reject) => {
+    createFetch(requestConfig).then(res => resolve(res.data));
+  }));
+}
+
+// delete
+export function remove(procCode: string, params?: AsObject, headers?: AsObject) {
+  const requestConfig: RequestOptions = {
+    url: `/onlinecode-api/api/v1/delete/${procCode}`,
+    method: 'DELETE',
+    data: params,
+    headers: headers
+  };
+  return new Promise<any>(((resolve, reject) => {
+    createFetch(requestConfig).then(res => resolve(res.data));
+  }));
+}
+
 // config 留着扩展
 export function createFetchHandler(config?: Record<string, unknown>) {
   // eslint-disable-next-line space-before-function-paren

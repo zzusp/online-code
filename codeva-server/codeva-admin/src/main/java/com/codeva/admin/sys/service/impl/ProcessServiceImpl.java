@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import sun.net.www.protocol.file.FileURLConnection;
 
 import javax.sql.DataSource;
 import javax.tools.JavaFileObject;
@@ -311,12 +310,12 @@ public class ProcessServiceImpl implements ProcessService {
             String pkg = ext_form;
             try {
                 if (ext_form.startsWith("file:/")) {
-                    FileURLConnection conn = (FileURLConnection) url.openConnection();
-                    conn.connect();
+//                    FileURLConnection conn = (FileURLConnection) url.openConnection();
+//                    conn.connect();
                     if (ext_form.endsWith(".jar") && !ext_form.endsWith("idea_rt.jar")) {
-                        Enumeration<JarEntry> jar_items = new JarFile(new File(ext_form.replace("file:/", ""))).entries();
-                        while (jar_items.hasMoreElements()) {
-                            JarEntry item = jar_items.nextElement();
+                        Enumeration<JarEntry> jarItems = new JarFile(new File(ext_form.replace("file:/", ""))).entries();
+                        while (jarItems.hasMoreElements()) {
+                            JarEntry item = jarItems.nextElement();
                             if (item.isDirectory() || (!item.getName().endsWith(".class")) || item.getName().contains("$")) {
                                 continue;
                             }
@@ -350,7 +349,7 @@ public class ProcessServiceImpl implements ProcessService {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+            throw new BusinessException("自动补全异常，错误信息" + e.getMessage(), e.getCause());
             }
         }
         return list;

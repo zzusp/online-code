@@ -2,6 +2,7 @@ package com.alibaba.compileflow.engine.process.preruntime.compiler.impl;
 
 import com.alibaba.compileflow.engine.common.CompileFlowException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 
@@ -20,9 +21,14 @@ public class BpmnFlowClassLoader extends URLClassLoader {
                         URL url = new URL("file:///" + CompileConstants.FLOW_COMPILE_CLASS_DIR);
                         List<URL> urls = new ArrayList<>();
                         urls.add(url);
-                        URLClassLoader parent = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-                        urls.addAll(Arrays.asList(parent.getURLs()));
-                        instance = new BpmnFlowClassLoader(urls.toArray(new URL[]{}), parent);
+//                        URLClassLoader parent = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+//                        urls.addAll(Arrays.asList(parent.getURLs()));
+//                        instance = new BpmnFlowClassLoader(urls.toArray(new URL[]{}), parent);
+                        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+                        if (parent instanceof URLClassLoader) {
+                            urls.addAll(Arrays.asList(((URLClassLoader) parent).getURLs()));
+                        }
+                        instance = new BpmnFlowClassLoader(urls.toArray(new URL[0]), parent);
                     } catch (MalformedURLException var3) {
                         throw new CompileFlowException(var3);
                     }

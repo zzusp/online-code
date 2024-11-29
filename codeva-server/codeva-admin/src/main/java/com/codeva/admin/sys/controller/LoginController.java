@@ -1,6 +1,7 @@
 package com.codeva.admin.sys.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.codeva.admin.constant.SystemProcCodeConstants;
 import com.codeva.admin.sys.service.ProcessService;
 import com.codeva.admin.web.R;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class LoginController {
         Map<String, Object> vars = new HashMap<>();
         vars.put("username", username);
         vars.put("password", password);
-        return R.ok(processService.run("login", vars));
+        return R.ok(processService.run(SystemProcCodeConstants.LOGIN, vars));
     }
 
     @GetMapping("/logout")
