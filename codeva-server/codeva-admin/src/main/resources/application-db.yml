@@ -3,9 +3,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/onlinecode_dev?allowMultiQueries=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://124.222.119.198:3306/onlinecode_dev?allowMultiQueries=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
-    password:
+    password: ZzuBro303@!
     # 初始连接数
     initialSize: 5
     # 最小连接池数量

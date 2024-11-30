@@ -3,7 +3,9 @@ package com.codeva.admin.aspectj;
 import com.alibaba.compileflow.extension.exception.CompilerException;
 import com.alibaba.compileflow.extension.exception.RunCmdException;
 import com.codeva.admin.exception.BusinessException;
+import com.codeva.admin.exception.ForbiddenException;
 import com.codeva.admin.exception.SQLErrorException;
+import com.codeva.admin.exception.UnauthorizedException;
 import com.codeva.admin.web.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /**
+     * 未登录、未验证异常
+     */
+    @ExceptionHandler(value = UnauthorizedException.class)
+    public R<Object> handleUnauthorizedException(UnauthorizedException e) {
+        log.error(e.getMessage(), e);
+        return R.unauthorized();
+    }
+
+    /**
+     * 权限不足异常
+     */
+    @ExceptionHandler(value = ForbiddenException.class)
+    public R<Object> handleForbiddenExceptionException(ForbiddenException e) {
+        log.error(e.getMessage(), e);
+        return R.forbidden();
+    }
 
     /**
      * 编译异常

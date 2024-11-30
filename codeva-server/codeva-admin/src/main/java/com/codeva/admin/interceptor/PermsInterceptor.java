@@ -5,9 +5,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.codeva.admin.constant.ProcConstants;
 import com.codeva.admin.enums.AuthTypeEnum;
 import com.codeva.admin.enums.StatusEnum;
-import com.codeva.admin.sys.model.RunParam;
-import com.codeva.admin.sys.model.SysProcess;
-import com.codeva.admin.sys.service.ProcessService;
+import com.codeva.admin.sys.model.SysMenu;
+import com.codeva.admin.sys.service.MenuService;
 import com.codeva.admin.web.R;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -24,33 +23,34 @@ import java.util.stream.Collectors;
 @Component
 public class PermsInterceptor implements HandlerInterceptor {
 
-    private final ProcessService processService;
+    private final MenuService menuService;
 
-    public PermsInterceptor(ProcessService processService) {
-        this.processService = processService;
+    public PermsInterceptor(MenuService menuService) {
+        this.menuService = menuService;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        List<SysProcess> list = processService.listAll();
+        String url = request.getServletPath();
+        List<SysMenu> list = menuService.listAll();
+        list = list.stream().filter(v -> StringUtils.isNotBlank(v.getUrl())).collect(Collectors.toList());
         // 可匿名访问的接口
-        Set<String> anonProcSet = list.stream()
-                .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysProcess::getProcCode).collect(Collectors.toSet());
-        RepeatedlyRequestWrapper requestWrapper = new RepeatedlyRequestWrapper(request, response);
-        RunParam param = JSONObject.parseObject(RepeatedlyRequestWrapper.getBodyString(requestWrapper), RunParam.class);
-        // 登录页面免登录
-        if (param != null && ProcConstants.MENU_GET_BY_CODE.equals(param.getProcCode())) {
+        Set<String> anonUrlSet = list.stream()
+                .filter(v -> AuthTypeEnum.ANON.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
+                .map(SysMenu::getUrl).collect(Collectors.toSet());
+        if (anonUrlSet.contains(url)) {
             return true;
         }
-        String url = request.getServletPath();
+        // 登录后可访问的接口
+        Set<String> authUrlSet = list.stream()
+                .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
+                .map(SysMenu::getUrl).collect(Collectors.toSet());
+        if (authUrlSet.contains(url)) {
+            return true;
+        }
         // API接口自己做权限校验
         if (url.startsWith(ProcConstants.API_URL)) {
-            return true;
-        }
-        String procCode = param != null ? param.getProcCode() : null;
-        if (ProcConstants.PROC_RUN_URL.equals(url) && StringUtils.isNoneBlank(procCode) && anonProcSet.contains(procCode)) {
             return true;
         }
         if (StpUtil.isLogin()) {
@@ -65,23 +65,11 @@ public class PermsInterceptor implements HandlerInterceptor {
             // 判断菜单路径
             Set<String> urlSet = menus.stream().filter(v -> v.get("url") != null)
                     .map(v -> v.get("url").toString()).collect(Collectors.toSet());
-            if (urlSet.contains(url)) {
-                return true;
+            if (!urlSet.contains(url)) {
+                renderString(response, JSONObject.toJSONString(R.forbidden()));
+                return false;
             }
-            // 判断菜单编码
-            if (param != null && ProcConstants.MENU_GET_BY_CODE.equals(procCode)) {
-                Set<String> menuSet = menus.stream().map(v -> v.get("code").toString()).collect(Collectors.toSet());
-                if (!menuSet.isEmpty() && menuSet.contains(param.getVars().get("code").toString())) {
-                    return true;
-                }
-            }
-            // 判断流程编码
-            Set<String> procSet = process.stream().map(v -> v.get(ProcConstants.PROC_CODE).toString()).collect(Collectors.toSet());
-            if (ProcConstants.PROC_RUN_URL.equals(url) && !procSet.isEmpty() && procSet.contains(procCode)) {
-                return true;
-            }
-            renderString(response, JSONObject.toJSONString(R.forbidden()));
-            return false;
+            return true;
         }
         renderString(response, JSONObject.toJSONString(R.unauthorized()));
         return false;

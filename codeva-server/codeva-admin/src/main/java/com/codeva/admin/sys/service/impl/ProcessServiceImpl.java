@@ -7,10 +7,13 @@ import com.alibaba.compileflow.extension.executor.JavaExecutor;
 import com.alibaba.compileflow.extension.util.FlowUtils;
 import com.alibaba.compileflow.extension.util.VarUtils;
 import com.alibaba.fastjson2.JSONObject;
+import com.codeva.admin.constant.RedisKey;
+import com.codeva.admin.exception.ForbiddenException;
+import com.codeva.admin.sys.service.AuthService;
+import com.codeva.admin.sys.service.RedisCacheService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.PageInterceptor;
-import com.codeva.admin.constant.FlowConstants;
 import com.codeva.admin.enums.IdKeyEnum;
 import com.codeva.admin.exception.BusinessException;
 import com.codeva.admin.sys.dao.ProcessMapper;
@@ -59,19 +62,25 @@ public class ProcessServiceImpl implements ProcessService {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessServiceImpl.class);
 
-    private static final String LOCK_KEY = FlowConstants.BUSINESS_LOCK + "sys_process:";
-    private static final String CACHE_KEY = FlowConstants.BUSINESS_CACHE + "sys_process:";
+    private static final String LOCK_KEY = RedisKey.BUSINESS_LOCK + "sys_process:";
+    private static final String CACHE_KEY = RedisKey.BUSINESS_CACHE + "sys_process:";
+    private static final String ALL_PROC_CACHE = RedisKey.BUSINESS_CACHE + "all_process";
 
     private final SqlSessionFactory sqlSessionFactory;
     private final IDGen idGen;
     private final RedissonClient redissonClient;
     private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedisCacheService redisCacheService;
+    private final AuthService authService;
 
     public ProcessServiceImpl(DataSource dataSource, IDGen idGen, PageInterceptor pageInterceptor,
-                              RedissonClient redissonClient, RedisTemplate<Object, Object> redisTemplate) {
+                              RedissonClient redissonClient, RedisTemplate<Object, Object> redisTemplate,
+                              RedisCacheService redisCacheService, AuthService authService) {
         this.idGen = idGen;
         this.redissonClient = redissonClient;
         this.redisTemplate = redisTemplate;
+        this.redisCacheService = redisCacheService;
+        this.authService = authService;
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
         Configuration configuration = new Configuration(environment);
@@ -101,9 +110,12 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public List<SysProcess> listAll() {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-            return sqlSession.getMapper(ProcessMapper.class).getAllProcess(null, null, null);
-        }
+        return redisCacheService.cacheList(ALL_PROC_CACHE, (data) -> {
+            // 缓存未找到，查询数据库
+            try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+                return sqlSession.getMapper(ProcessMapper.class).getAllProcess(null, null, null);
+            }
+        }, SysProcess.class, 10, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -168,6 +180,7 @@ public class ProcessServiceImpl implements ProcessService {
             sqlSession.commit();
             // 删除缓存
             redisTemplate.delete(CACHE_KEY + procCode);
+            redisTemplate.delete(ALL_PROC_CACHE);
         } catch (Exception e) {
             log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
             throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
@@ -210,6 +223,8 @@ public class ProcessServiceImpl implements ProcessService {
                 sqlSession.getMapper(ProcessTaskMapper.class).insertBatch(tasks);
             }
             sqlSession.commit();
+            // 删除缓存
+            redisTemplate.delete(ALL_PROC_CACHE);
         }
     }
 
@@ -235,6 +250,7 @@ public class ProcessServiceImpl implements ProcessService {
                 sqlSession.commit();
                 // 删除缓存
                 redisTemplate.delete(CACHE_KEY + procCode);
+                redisTemplate.delete(ALL_PROC_CACHE);
             } catch (Exception e) {
                 log.error("删除流程失败，错误信息：{}", e.getMessage(), e);
             } finally {
@@ -246,6 +262,12 @@ public class ProcessServiceImpl implements ProcessService {
     @SuppressWarnings("unchecked")
     @Override
     public Object run(String code, Map<String, Object> params) {
+        if (StringUtils.isEmpty(code)) {
+            throw new BusinessException("流程编码不可为空");
+        }
+        if (!authService.checkProcessPermission(code, this.listAll())) {
+            throw new ForbiddenException();
+        }
         if (params == null) {
             params = new HashMap<>(8);
         }
@@ -327,27 +349,7 @@ public class ProcessServiceImpl implements ProcessService {
                     } else if (ext_form.endsWith("/classes/")) {
                         readFile(new File(ext_form.replace("file:/", "")), list);
                     }
-                } else {
-//                    JarURLConnection conn = (JarURLConnection) url.openConnection();
-//                    conn.connect();
-//                    Enumeration<JarEntry> jar_items = conn.getJarFile().entries();
-//                    while (jar_items.hasMoreElements()) {
-//                        JarEntry item = jar_items.nextElement();
-//                        if (item.isDirectory() || (!item.getName().endsWith(".class"))) {
-//                            continue;
-//                        }
-////                    if (item.getName().lastIndexOf("/") != (pkg.length() - 1)) {
-////                        continue;
-////                    }
-//                        String name = item.getName();
-////                    URI uri = URI.create(jar + "!/" + name);
-//                        String binaryName = name.replaceAll("/", ".");
-//                        binaryName = binaryName.substring(0, binaryName.indexOf(JavaFileObject.Kind.CLASS.extension));
-////                    result.add(new JavaStringCompiler.LibJavaFileObject(binaryName, uri));
-//                        list.add(binaryName);
-//                    }
                 }
-
             } catch (Exception e) {
             throw new BusinessException("自动补全异常，错误信息" + e.getMessage(), e.getCause());
             }
@@ -377,39 +379,16 @@ public class ProcessServiceImpl implements ProcessService {
      * @return
      */
     private SysProcess getByProcCode(String code) {
-        // 先查缓存
-        String cache = (String) redisTemplate.opsForValue().get(CACHE_KEY + code);
-        if (StringUtils.isNoneBlank(cache)) {
-            return JSONObject.parseObject(cache, SysProcess.class);
-        }
-        SysProcess process;
-        // 缓存未找到，查询数据库
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-            process = sqlSession.getMapper(ProcessMapper.class).getByProcCode(code);
-            if (process != null) {
-                process.setTasks(sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(code));
+        return redisCacheService.cache(CACHE_KEY + code, (data) -> {
+            // 缓存未找到，查询数据库
+            try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+                data = sqlSession.getMapper(ProcessMapper.class).getByProcCode(code);
+                if (data != null) {
+                    data.setTasks(sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(code));
+                }
             }
-        }
-        // 分布式业务锁
-        RLock lock = redissonClient.getLock(LOCK_KEY + code);
-        try {
-            // 获取锁
-            boolean locked = lock.tryLock(10, TimeUnit.SECONDS);
-            if (!locked) {
-                throw new BusinessException("服务器忙，请稍后重试");
-            }
-            // 写入缓存
-            if (process == null) {
-                redisTemplate.delete(CACHE_KEY + code);
-            } else {
-                redisTemplate.opsForValue().setIfAbsent(CACHE_KEY + code, JSONObject.toJSONString(process), 1, TimeUnit.DAYS);
-            }
-        } catch (Exception e) {
-            log.error("缓存流程失败，错误信息：{}", e.getMessage(), e);
-        } finally {
-            lock.unlock();
-        }
-        return process;
+            return data;
+        }, SysProcess.class, 10, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
 }

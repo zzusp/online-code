@@ -1,5 +1,6 @@
 package com.codeva.admin.cron.service.impl;
 
+import com.codeva.admin.constant.RedisKey;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.PageInterceptor;
@@ -46,7 +47,7 @@ public class CronServiceImpl implements CronService {
 
     private static final Logger log = LoggerFactory.getLogger(CronServiceImpl.class);
 
-    private static final String LOCK_KEY = FlowConstants.BUSINESS_LOCK + "sys_cron:";
+    private static final String LOCK_KEY = RedisKey.BUSINESS_LOCK + "sys_cron:";
 
     private final SqlSessionFactory sqlSessionFactory;
     private final IDGen idGen;

@@ -1,6 +1,7 @@
 package com.codeva.admin.sys.controller;
 
 import com.codeva.admin.constant.ProcConstants;
+import com.codeva.admin.sys.service.AuthService;
 import com.codeva.admin.sys.service.ProcessService;
 import com.codeva.admin.util.StringUtils;
 import com.codeva.admin.web.R;
@@ -20,16 +21,24 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class ApiController {
 
+    private final AuthService authService;
     private final ProcessService processService;
 
-    public ApiController(ProcessService processService) {
+    public ApiController(AuthService authService, ProcessService processService) {
+        this.authService = authService;
         this.processService = processService;
     }
 
-    @GetMapping("/schema/{code}")
-    public R<Object> schema(@PathVariable String code) {
+    @GetMapping("/schema/{menuCode}")
+    public R<Object> schema(@PathVariable String menuCode) {
+        // 连字符转驼峰
+        menuCode = StringUtils.hyphenToCamel(menuCode);
+        // 鉴权
+        if (!authService.checkMenuPermission(menuCode)) {
+            return R.forbidden();
+        }
         Map<String, Object> vars = new HashMap<>(8);
-        vars.put("code", StringUtils.hyphenToCamel(code));
+        vars.put("code", StringUtils.hyphenToCamel(menuCode));
         return R.ok(processService.run(ProcConstants.MENU_GET_BY_CODE, vars));
     }
 

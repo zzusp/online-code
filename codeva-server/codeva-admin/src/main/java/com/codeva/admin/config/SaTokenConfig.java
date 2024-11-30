@@ -2,7 +2,7 @@ package com.codeva.admin.config;
 
 import com.codeva.admin.filter.RepeatableFilter;
 import com.codeva.admin.interceptor.PermsInterceptor;
-import com.codeva.admin.sys.service.ProcessService;
+import com.codeva.admin.sys.service.MenuService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,17 +12,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class SaTokenConfig implements WebMvcConfigurer {
 
-    private final ProcessService processService;
+    private final MenuService menuService;
 
-    public SaTokenConfig(ProcessService processService) {
-        this.processService = processService;
+    public SaTokenConfig(MenuService menuService) {
+        this.menuService = menuService;
     }
 
     // 注册拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册拦截器
-        registry.addInterceptor(new PermsInterceptor(processService))
+        registry.addInterceptor(new PermsInterceptor(this.menuService))
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error", "/login", "/logout", "/isLogin");
     }
