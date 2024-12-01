@@ -25,12 +25,12 @@ public class ProcessController {
         return processService.list(pageParam);
     }
 
-    @GetMapping("/getById")
+    @GetMapping("/get-by-id")
     public R<SysProcess> getById(@RequestParam long id) {
         return R.ok(processService.getById(id));
     }
 
-    @GetMapping("/getInfoWithTaskById")
+    @GetMapping("/get-info-with-task-by-id")
     public R<SysProcess> getInfoWithTaskById(@RequestParam long id) {
         return R.ok(processService.getInfoWithTaskById(id));
     }

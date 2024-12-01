@@ -6,7 +6,6 @@ import com.alibaba.compileflow.engine.process.preruntime.compiler.impl.BpmnFlowC
 import com.alibaba.compileflow.extension.executor.JavaExecutor;
 import com.alibaba.compileflow.extension.util.FlowUtils;
 import com.alibaba.compileflow.extension.util.VarUtils;
-import com.alibaba.fastjson2.JSONObject;
 import com.codeva.admin.constant.RedisKey;
 import com.codeva.admin.exception.ForbiddenException;
 import com.codeva.admin.sys.service.AuthService;
@@ -63,8 +62,6 @@ public class ProcessServiceImpl implements ProcessService {
     private static final Logger log = LoggerFactory.getLogger(ProcessServiceImpl.class);
 
     private static final String LOCK_KEY = RedisKey.BUSINESS_LOCK + "sys_process:";
-    private static final String CACHE_KEY = RedisKey.BUSINESS_CACHE + "sys_process:";
-    private static final String ALL_PROC_CACHE = RedisKey.BUSINESS_CACHE + "all_process";
 
     private final SqlSessionFactory sqlSessionFactory;
     private final IDGen idGen;
@@ -110,7 +107,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public List<SysProcess> listAll() {
-        return redisCacheService.cacheList(ALL_PROC_CACHE, (data) -> {
+        return redisCacheService.cacheList(RedisKey.ALL_PROC_CACHE, (data) -> {
             // 缓存未找到，查询数据库
             try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
                 return sqlSession.getMapper(ProcessMapper.class).getAllProcess(null, null, null);
@@ -179,8 +176,8 @@ public class ProcessServiceImpl implements ProcessService {
             }
             sqlSession.commit();
             // 删除缓存
-            redisTemplate.delete(CACHE_KEY + procCode);
-            redisTemplate.delete(ALL_PROC_CACHE);
+            redisTemplate.delete(RedisKey.PROC_CACHE_KEY + procCode);
+            redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
         } catch (Exception e) {
             log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
             throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
@@ -224,7 +221,7 @@ public class ProcessServiceImpl implements ProcessService {
             }
             sqlSession.commit();
             // 删除缓存
-            redisTemplate.delete(ALL_PROC_CACHE);
+            redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
         }
     }
 
@@ -249,8 +246,8 @@ public class ProcessServiceImpl implements ProcessService {
                 sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
                 sqlSession.commit();
                 // 删除缓存
-                redisTemplate.delete(CACHE_KEY + procCode);
-                redisTemplate.delete(ALL_PROC_CACHE);
+                redisTemplate.delete(RedisKey.PROC_CACHE_KEY + procCode);
+                redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
             } catch (Exception e) {
                 log.error("删除流程失败，错误信息：{}", e.getMessage(), e);
             } finally {
@@ -259,13 +256,18 @@ public class ProcessServiceImpl implements ProcessService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object run(String code, Map<String, Object> params) {
+        return this.run(code, true, params);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object run(String code, boolean checkPermission, Map<String, Object> params) {
         if (StringUtils.isEmpty(code)) {
             throw new BusinessException("流程编码不可为空");
         }
-        if (!authService.checkProcessPermission(code, this.listAll())) {
+        if (checkPermission && !authService.checkProcessPermission(code, this.listAll())) {
             throw new ForbiddenException();
         }
         if (params == null) {
@@ -379,7 +381,7 @@ public class ProcessServiceImpl implements ProcessService {
      * @return
      */
     private SysProcess getByProcCode(String code) {
-        return redisCacheService.cache(CACHE_KEY + code, (data) -> {
+        return redisCacheService.cache(RedisKey.PROC_CACHE_KEY + code, (data) -> {
             // 缓存未找到，查询数据库
             try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
                 data = sqlSession.getMapper(ProcessMapper.class).getByProcCode(code);

@@ -1,7 +1,7 @@
 package com.codeva.admin.sys.controller;
 
-import com.codeva.admin.constant.ProcConstants;
 import com.codeva.admin.sys.service.AuthService;
+import com.codeva.admin.sys.service.MenuService;
 import com.codeva.admin.sys.service.ProcessService;
 import com.codeva.admin.util.StringUtils;
 import com.codeva.admin.web.R;
@@ -23,10 +23,12 @@ public class ApiController {
 
     private final AuthService authService;
     private final ProcessService processService;
+    private final MenuService menuService;
 
-    public ApiController(AuthService authService, ProcessService processService) {
+    public ApiController(AuthService authService, ProcessService processService, MenuService menuService) {
         this.authService = authService;
         this.processService = processService;
+        this.menuService = menuService;
     }
 
     @GetMapping("/schema/{menuCode}")
@@ -37,9 +39,8 @@ public class ApiController {
         if (!authService.checkMenuPermission(menuCode)) {
             return R.forbidden();
         }
-        Map<String, Object> vars = new HashMap<>(8);
-        vars.put("code", StringUtils.hyphenToCamel(menuCode));
-        return R.ok(processService.run(ProcConstants.MENU_GET_BY_CODE, vars));
+        final String code = menuCode;
+        return R.ok(menuService.listAll().stream().filter(v -> code.equals(v.getCode())).findFirst().orElse(null));
     }
 
     @GetMapping("/get/{procCode}")

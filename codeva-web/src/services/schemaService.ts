@@ -27,9 +27,12 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
   let schemaJson = undefined;
   await schema(scenarioName)
     .then((res: any) => {
-      schemaJson = JSON.parse(res.data.schema_json);
+      // 去除转义
+      const schema_json = res.data.schemaJson;
+      schemaJson = JSON.parse(schema_json);
+      console.log(schemaJson);
         if ('login' !== scenarioName) {
-          window.localStorage.setItem(getLSName(scenarioName), res.data.data.schema_json);
+          window.localStorage.setItem(getLSName(scenarioName), schema_json);
         }
     })
     .catch((err: any) => {
@@ -49,9 +52,9 @@ const setProjectSchemaToDb = async (scenarioName: string) => {
     code: scenarioName,
     schema: schema
   }
-  await post('menuSaveSchema', data)
+  await post('menu-save-schema', data)
     .then((res: any) => {
-      // 删除浏览器本地缓存中的内容
+        // 删除浏览器本地缓存中的内容
         window.localStorage.removeItem(getLSName(scenarioName));
         window.localStorage.removeItem(getLSName(scenarioName, 'packages'));
         Message.success('成功保存到数据库');

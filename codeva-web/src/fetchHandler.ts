@@ -7,7 +7,7 @@ import {Message, Dialog} from "@alifd/next";
 // schema
 export function schema(code: string, params?: AsObject, headers?: AsObject) {
   const requestConfig: RequestOptions = {
-    url: `/onlinecode-api/api/v1/schema/${code}`,
+    url: `/onlinecode-api/api/v1/schema/${camelToHyphen(code)}`,
     method: 'GET',
     data: params,
     headers: headers
@@ -20,7 +20,7 @@ export function schema(code: string, params?: AsObject, headers?: AsObject) {
 // get
 export function get(procCode: string, params?: AsObject, headers?: AsObject) {
   const requestConfig: RequestOptions = {
-    url: `/onlinecode-api/api/v1/get/${procCode}`,
+    url: `/onlinecode-api/api/v1/get/${camelToHyphen(procCode)}`,
     method: 'GET',
     data: params,
     headers: headers
@@ -37,7 +37,7 @@ export function post(procCode: string, params?: AsObject, headers?: AsObject) {
   };
   headers = Object.assign(defaultHeaders, headers);
   const requestConfig: RequestOptions = {
-    url: `/onlinecode-api/api/v1/post/${procCode}`,
+    url: `/onlinecode-api/api/v1/post/${camelToHyphen(procCode)}`,
     method: 'POST',
     data: params,
     headers: headers
@@ -50,7 +50,7 @@ export function post(procCode: string, params?: AsObject, headers?: AsObject) {
 // delete
 export function remove(procCode: string, params?: AsObject, headers?: AsObject) {
   const requestConfig: RequestOptions = {
-    url: `/onlinecode-api/api/v1/delete/${procCode}`,
+    url: `/onlinecode-api/api/v1/delete/${camelToHyphen(procCode)}`,
     method: 'DELETE',
     data: params,
     headers: headers
@@ -58,6 +58,11 @@ export function remove(procCode: string, params?: AsObject, headers?: AsObject) 
   return new Promise<any>(((resolve, reject) => {
     createFetch(requestConfig).then(res => resolve(res.data));
   }));
+}
+
+// 驼峰转连字符
+function camelToHyphen(str: string) {
+  return str.replace(/([A-Z])/g, "-$1").toLowerCase();
 }
 
 // config 留着扩展
@@ -105,7 +110,7 @@ export async function createFetch(options: RequestOptions) {
           }
         } else if (res.data.code === 403 || res.data.code === 500) {
           Message.error(res.data.message);
-          return resolve(res);
+          return reject(res);
         }
       } else {
         console.log('res error', res);

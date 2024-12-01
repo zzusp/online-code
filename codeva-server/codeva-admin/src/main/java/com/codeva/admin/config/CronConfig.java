@@ -45,7 +45,7 @@ public class CronConfig implements SchedulingConfigurer {
         if (!cronList.isEmpty()) {
             for (SysCron cron : cronList) {
                 cronTaskRegistrar.startTask(cron.getCronCode(), cron.getCronTxt(), () -> {
-                    processService.run(cron.getProcCode(), JsonUtils.convertJsonToMap(cron.getExecuteParam()));
+                    processService.run(cron.getProcCode(), false, JsonUtils.convertJsonToMap(cron.getExecuteParam()));
                 });
                 log.info("--> {}({}) cron task is running.", cron.getCronName(), cron.getCronCode());
             }

@@ -9,6 +9,7 @@ import com.alibaba.compileflow.extension.util.FlowUtils;
 import com.codeva.admin.constant.RedisKey;
 import com.codeva.admin.enums.AuthTypeEnum;
 import com.codeva.admin.enums.StatusEnum;
+import com.codeva.admin.sys.model.SysMenu;
 import com.codeva.admin.sys.model.SysProcess;
 import com.codeva.admin.sys.service.ProcessService;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class AppInitializer implements InitializingBean, ApplicationContextAware
         bpmnElementParserProvider.registerParser(new SequenceFlowParser());
         bpmnElementParserProvider.registerParser(new TaskParser());
         ProcessService processService = this.applicationContext.getBean(ProcessService.class);
+        // 获取所有流程信息（redis缓存）
         List<SysProcess> list = processService.listAll();
         initBpmn(list);
     }

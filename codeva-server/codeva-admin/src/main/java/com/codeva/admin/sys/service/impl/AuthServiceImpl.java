@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         Set<String> anonProcSet = list.stream()
                 .filter(v -> AuthTypeEnum.ANON.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
                 .map(SysProcess::getProcCode).collect(Collectors.toSet());
-        if (anonProcSet.contains(procCode) || "menuGetByCode".equals(procCode)) {
+        if (anonProcSet.contains(procCode)) {
             return true;
         }
         // 登录后可访问的接口

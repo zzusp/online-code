@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class MenuServiceImpl implements MenuService {
-    private static final String ALL_MENU_CACHE = RedisKey.BUSINESS_CACHE + "all_menu";
 
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisCacheService redisCacheService;
@@ -42,7 +41,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<SysMenu> listAll() {
-        return redisCacheService.cacheList(ALL_MENU_CACHE, (data) -> {
+        return redisCacheService.cacheList(RedisKey.ALL_MENU_CACHE, (data) -> {
             // 缓存未找到，查询数据库
             try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
                 return sqlSession.getMapper(MenuMapper.class).getAllMenu();

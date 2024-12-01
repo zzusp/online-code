@@ -69,6 +69,15 @@ public interface ProcessService {
     Object run(String code, Map<String, Object> params);
 
     /**
+     * 运行
+     *
+     * @param code   流程编码
+     * @param params 运行参数
+     * @return 结果
+     */
+    Object run(String code, boolean checkPermission, Map<String, Object> params);
+
+    /**
      * 运行单个节点
      *
      * @param procCode 流程编码

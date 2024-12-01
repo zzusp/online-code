@@ -19,4 +19,10 @@ public class RedisKey {
      */
     public static final String AUTH_PROC_CODES_CACHE = BUSINESS_CACHE + "auth_codes";
 
+    public static final String PROC_CACHE_KEY = RedisKey.BUSINESS_CACHE + "sys_process:";
+
+    public static final String ALL_PROC_CACHE = RedisKey.BUSINESS_CACHE + "all_process";
+
+    public static final String ALL_MENU_CACHE = RedisKey.BUSINESS_CACHE + "all_menu";
+
 }

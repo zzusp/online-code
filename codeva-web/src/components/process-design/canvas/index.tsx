@@ -67,7 +67,7 @@ export class ProcessCanvas extends React.Component<any, any> {
   }
 
   async getProcessInfo(procId: any) {
-    await createFetch({url: '/onlinecode-api/process/getInfoWithTaskById?id=' + procId, method: 'GET'})
+    await createFetch({url: '/onlinecode-api/process/get-info-with-task-by-id?id=' + procId, method: 'GET'})
       .then((res: any) => {
         if (res.status === 200 && res.data && res.data.code === 200) {
           const proc = res.data.data;
