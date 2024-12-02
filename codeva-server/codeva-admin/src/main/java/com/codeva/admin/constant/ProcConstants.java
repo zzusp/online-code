@@ -7,22 +7,13 @@ package com.codeva.admin.constant;
  * @modified By
  */
 public class ProcConstants {
-
-    /**
-     * 根据菜单编码获取菜单
-     */
-    public static final String MENU_GET_BY_CODE = "menuGetByCode";
     /**
      * 根据菜单编码获取菜单
      */
     public static final String PROC_CODE = "procCode";
     /**
-     * 根据菜单编码获取菜单
+     * 统一接口前缀
      */
     public static final String API_URL = "/api/v1";
-    /**
-     * 根据菜单编码获取菜单
-     */
-    public static final String PROC_RUN_URL = "/process/run";
 
 }

@@ -7,22 +7,23 @@ import com.alibaba.compileflow.extension.executor.JavaExecutor;
 import com.alibaba.compileflow.extension.util.FlowUtils;
 import com.alibaba.compileflow.extension.util.VarUtils;
 import com.codeva.admin.constant.RedisKey;
-import com.codeva.admin.exception.ForbiddenException;
-import com.codeva.admin.sys.service.AuthService;
-import com.codeva.admin.sys.service.RedisCacheService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.PageInterceptor;
 import com.codeva.admin.enums.IdKeyEnum;
 import com.codeva.admin.exception.BusinessException;
+import com.codeva.admin.exception.ForbiddenException;
 import com.codeva.admin.sys.dao.ProcessMapper;
 import com.codeva.admin.sys.dao.ProcessTaskMapper;
 import com.codeva.admin.sys.model.SysProcess;
 import com.codeva.admin.sys.model.SysProcessTask;
+import com.codeva.admin.sys.service.AuthService;
 import com.codeva.admin.sys.service.ProcessService;
+import com.codeva.admin.sys.service.RedisCacheService;
+import com.codeva.admin.sys.service.RedisLockService;
 import com.codeva.admin.web.R;
 import com.codeva.admin.web.page.PageParam;
 import com.codeva.admin.web.page.PageTable;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageInterceptor;
 import com.sankuai.inf.leaf.IDGen;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.Environment;
@@ -32,8 +33,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -61,20 +60,19 @@ public class ProcessServiceImpl implements ProcessService {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessServiceImpl.class);
 
-    private static final String LOCK_KEY = RedisKey.BUSINESS_LOCK + "sys_process:";
-
     private final SqlSessionFactory sqlSessionFactory;
     private final IDGen idGen;
-    private final RedissonClient redissonClient;
+    private final RedisLockService redisLockService;
     private final RedisTemplate<Object, Object> redisTemplate;
     private final RedisCacheService redisCacheService;
     private final AuthService authService;
 
     public ProcessServiceImpl(DataSource dataSource, IDGen idGen, PageInterceptor pageInterceptor,
-                              RedissonClient redissonClient, RedisTemplate<Object, Object> redisTemplate,
+                              RedisLockService redisLockService,
+                              RedisTemplate<Object, Object> redisTemplate,
                               RedisCacheService redisCacheService, AuthService authService) {
         this.idGen = idGen;
-        this.redissonClient = redissonClient;
+        this.redisLockService = redisLockService;
         this.redisTemplate = redisTemplate;
         this.redisCacheService = redisCacheService;
         this.authService = authService;
@@ -141,49 +139,43 @@ public class ProcessServiceImpl implements ProcessService {
         }
         JavaExecutor executor = new JavaExecutor();
         // 分布式业务锁
-        RLock lock = redissonClient.getLock(LOCK_KEY + procCode);
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
-            // 获取锁
-            boolean locked = lock.tryLock(10, TimeUnit.SECONDS);
-            if (!locked) {
-                throw new BusinessException("服务器忙，请稍后重试");
-            }
-            // 业务处理
-            process.setBpmn(FlowUtils.replaceProcCode(process.getBpmn(), procCode));
-            if (process.getId() == null) {
-                if (sqlSession.getMapper(ProcessMapper.class).getByProcCode(procCode) != null) {
-                    throw new BusinessException("编码已存在");
-                }
-                process.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
-                process.setCreateTime(LocalDateTime.now());
-                sqlSession.getMapper(ProcessMapper.class).insert(process);
-            } else {
-                process.setUpdateTime(LocalDateTime.now());
-                sqlSession.getMapper(ProcessMapper.class).update(process);
-            }
-            if (process.getTasks() != null && process.getTasks().size() > 0) {
-                sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
-                for (SysProcessTask task : process.getTasks()) {
-                    if (task.getId() == null) {
-                        task.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
+        redisLockService.lock(RedisKey.getProcCacheKey(procCode), v -> {
+            try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
+                // 业务处理
+                process.setBpmn(FlowUtils.replaceProcCode(process.getBpmn(), procCode));
+                if (process.getId() == null) {
+                    if (sqlSession.getMapper(ProcessMapper.class).getByProcCode(procCode) != null) {
+                        throw new BusinessException("编码已存在");
                     }
-                    // 编译检查
-                    if (StringUtils.isNoneBlank(task.getExecuteCmd())) {
-                        executor.compiler(task.getExecuteCmd());
-                    }
+                    process.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
+                    process.setCreateTime(LocalDateTime.now());
+                    sqlSession.getMapper(ProcessMapper.class).insert(process);
+                } else {
+                    process.setUpdateTime(LocalDateTime.now());
+                    sqlSession.getMapper(ProcessMapper.class).update(process);
                 }
-                sqlSession.getMapper(ProcessTaskMapper.class).insertBatch(process.getTasks());
+                if (process.getTasks() != null && !process.getTasks().isEmpty()) {
+                    sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
+                    for (SysProcessTask task : process.getTasks()) {
+                        if (task.getId() == null) {
+                            task.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
+                        }
+                        // 编译检查
+                        if (StringUtils.isNoneBlank(task.getExecuteCmd())) {
+                            executor.compiler(task.getExecuteCmd());
+                        }
+                    }
+                    sqlSession.getMapper(ProcessTaskMapper.class).insertBatch(process.getTasks());
+                }
+                sqlSession.commit();
+                // 删除缓存
+                redisTemplate.delete(RedisKey.getProcCacheKey(procCode));
+                redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
+            } catch (Exception e) {
+                log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
+                throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
             }
-            sqlSession.commit();
-            // 删除缓存
-            redisTemplate.delete(RedisKey.PROC_CACHE_KEY + procCode);
-            redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
-        } catch (Exception e) {
-            log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
-            throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
-        } finally {
-            lock.unlock();
-        }
+        }, 10, TimeUnit.SECONDS);
     }
 
     @Override
@@ -211,7 +203,7 @@ public class ProcessServiceImpl implements ProcessService {
             sqlSession.getMapper(ProcessMapper.class).insert(process);
             // 拷贝节点
             List<SysProcessTask> tasks = sqlSession.getMapper(ProcessTaskMapper.class).getByProcCode(fromCode);
-            if (tasks != null && tasks.size() > 0) {
+            if (tasks != null && !tasks.isEmpty()) {
                 for (SysProcessTask task : tasks) {
                     task.setId(idGen.get(IdKeyEnum.SYS_PROCESS.getCode()).getId());
                     task.setProcCode(procCode);
@@ -234,25 +226,19 @@ public class ProcessServiceImpl implements ProcessService {
             }
             String procCode = process.getProcCode();
             // 分布式业务锁
-            RLock lock = redissonClient.getLock(LOCK_KEY + procCode);
-            try {
-                // 获取锁
-                boolean locked = lock.tryLock(10, TimeUnit.SECONDS);
-                if (!locked) {
-                    throw new BusinessException("服务器忙，请稍后重试");
+            redisLockService.lock(RedisKey.getProcCacheKey(procCode), v -> {
+                try {
+                    // 业务操作
+                    sqlSession.getMapper(ProcessMapper.class).delete(id);
+                    sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
+                    sqlSession.commit();
+                    // 删除缓存
+                    redisTemplate.delete(RedisKey.getProcCacheKey(procCode));
+                    redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
+                } catch (Exception e) {
+                    log.error("删除流程失败，错误信息：{}", e.getMessage(), e);
                 }
-                // 业务操作
-                sqlSession.getMapper(ProcessMapper.class).delete(id);
-                sqlSession.getMapper(ProcessTaskMapper.class).deleteByProcCode(procCode);
-                sqlSession.commit();
-                // 删除缓存
-                redisTemplate.delete(RedisKey.PROC_CACHE_KEY + procCode);
-                redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
-            } catch (Exception e) {
-                log.error("删除流程失败，错误信息：{}", e.getMessage(), e);
-            } finally {
-                lock.unlock();
-            }
+            }, 10, TimeUnit.SECONDS);
         }
     }
 
@@ -353,7 +339,7 @@ public class ProcessServiceImpl implements ProcessService {
                     }
                 }
             } catch (Exception e) {
-            throw new BusinessException("自动补全异常，错误信息" + e.getMessage(), e.getCause());
+                throw new BusinessException("自动补全异常，错误信息" + e.getMessage(), e.getCause());
             }
         }
         return list;
@@ -381,7 +367,7 @@ public class ProcessServiceImpl implements ProcessService {
      * @return
      */
     private SysProcess getByProcCode(String code) {
-        return redisCacheService.cache(RedisKey.PROC_CACHE_KEY + code, (data) -> {
+        return redisCacheService.cache(RedisKey.getProcCacheKey(code), (data) -> {
             // 缓存未找到，查询数据库
             try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
                 data = sqlSession.getMapper(ProcessMapper.class).getByProcCode(code);

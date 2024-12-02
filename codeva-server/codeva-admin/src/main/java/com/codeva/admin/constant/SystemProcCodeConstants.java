@@ -13,9 +13,4 @@ public class SystemProcCodeConstants {
      */
     public static final String LOGIN = "login";
 
-    /**
-     * 根据菜单编码获取菜单
-     */
-    public static final String MENU_GET_BY_CODE = "menuGetByCode";
-
 }

@@ -25,4 +25,7 @@ public class RedisKey {
 
     public static final String ALL_MENU_CACHE = RedisKey.BUSINESS_CACHE + "all_menu";
 
+    public static String getProcCacheKey(String procCode) {
+        return PROC_CACHE_KEY + procCode;
+    }
 }

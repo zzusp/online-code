@@ -6,10 +6,6 @@ import com.alibaba.compileflow.engine.process.preruntime.converter.impl.parser.p
 import com.alibaba.compileflow.engine.process.preruntime.converter.impl.parser.support.bpmn.*;
 import com.alibaba.compileflow.engine.process.preruntime.generator.bean.SpringApplicationContextProvider;
 import com.alibaba.compileflow.extension.util.FlowUtils;
-import com.codeva.admin.constant.RedisKey;
-import com.codeva.admin.enums.AuthTypeEnum;
-import com.codeva.admin.enums.StatusEnum;
-import com.codeva.admin.sys.model.SysMenu;
 import com.codeva.admin.sys.model.SysProcess;
 import com.codeva.admin.sys.service.ProcessService;
 import org.slf4j.Logger;
@@ -19,11 +15,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author 孙鹏

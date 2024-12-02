@@ -11,7 +11,7 @@ public interface RedisCacheService {
      *
      * @param key
      * @param query      缓存找不到时，执行的方法
-     * @param tryTime    上锁时长
+     * @param tryTime    等待锁定的最长时间
      * @param expireTime 过期时长
      * @param unit
      * @param <T>

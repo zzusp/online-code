@@ -1,8 +1,9 @@
 package com.codeva.admin.sys.dao;
 
 import com.codeva.admin.sys.model.SysMenu;
-import com.codeva.admin.sys.model.SysProcess;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
