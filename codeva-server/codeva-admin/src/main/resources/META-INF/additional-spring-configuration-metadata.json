@@ -6,6 +6,20 @@
       "description": "Set whether enable cron task.",
       "type": "java.lang.Boolean",
       "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "defaultValue": null,
+      "name": "codeva.weixin.app-id",
+      "description": "Set weixin appId.",
+      "type": "java.lang.String",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "defaultValue": null,
+      "name": "codeva.weixin.app-secret",
+      "description": "Set weixin appSecret.",
+      "type": "java.lang.String",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
     }
   ]
 }

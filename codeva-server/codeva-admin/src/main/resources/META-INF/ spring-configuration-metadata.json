@@ -9,6 +9,11 @@
       "sourceType": "com.codeva.admin.config.properties.CodevaProperties",
       "name": "codeva.cron",
       "type": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties",
+      "name": "codeva.weixin",
+      "type": "com.codeva.admin.config.properties.CodevaProperties"
     }
   ],
   "properties": [
@@ -17,6 +22,20 @@
       "name": "codeva.cron.enabled",
       "description": "Set whether enable cron task.",
       "type": "java.lang.Boolean",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "defaultValue": null,
+      "name": "codeva.weixin.app-id",
+      "description": "Set weixin appId.",
+      "type": "java.lang.String",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "defaultValue": null,
+      "name": "codeva.weixin.app-secret",
+      "description": "Set weixin appSecret.",
+      "type": "java.lang.String",
       "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
     }
   ]
