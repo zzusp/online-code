@@ -25,7 +25,7 @@ public interface ProcessMapper {
             @Result(column = "menu_code", property = "menuCode"),
             @Result(column = "proc_code", property = "procCode"),
             @Result(column = "proc_name", property = "procName"),
-            @Result(column = "bpmn", property = "bpmn"),
+//            @Result(column = "bpmn", property = "bpmn"),
             @Result(column = "auth", property = "auth"),
             @Result(column = "status", property = "status"),
             @Result(column = "create_time", property = "createTime", javaType = LocalDateTime.class),

@@ -11,6 +11,7 @@ import com.codeva.admin.sys.service.AuthService;
 import com.codeva.admin.sys.service.MenuService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,19 +30,24 @@ public class AuthServiceImpl implements AuthService {
     public boolean checkMenuPermission(String menuCode) {
         List<SysMenu> list = menuService.listAll();
         // 可匿名访问的菜单
-        Set<String> anonUrlSet = list.stream()
-                .filter(v -> AuthTypeEnum.ANON.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysMenu::getCode).collect(Collectors.toSet());
+        Set<String> anonUrlSet = new HashSet<>();
+        // 登录后可访问的菜单
+        Set<String> authUrlSet = new HashSet<>();
+        for (SysMenu v : list) {
+            if (StatusEnum.ENABLED.equals(v.getStatus())) {
+                if (AuthTypeEnum.ANON.equals(v.getAuth())) {
+                    anonUrlSet.add(v.getCode());
+                } else if (AuthTypeEnum.AUTH.equals(v.getAuth())) {
+                    authUrlSet.add(v.getCode());
+                }
+            }
+        }
         if (anonUrlSet.contains(menuCode)) {
             return true;
         }
         if (!StpUtil.isLogin()) {
             throw new UnauthorizedException();
         }
-        // 登录后可访问的菜单
-        Set<String> authUrlSet = list.stream()
-                .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysMenu::getCode).collect(Collectors.toSet());
         if (authUrlSet.contains(menuCode)) {
             return true;
         }
@@ -57,16 +63,24 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean checkProcessPermission(String procCode, List<SysProcess> list) {
         // 可匿名访问的接口
-        Set<String> anonProcSet = list.stream()
-                .filter(v -> AuthTypeEnum.ANON.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysProcess::getProcCode).collect(Collectors.toSet());
+        Set<String> anonProcSet = new HashSet<>();
+        // 登录后可访问的接口
+        Set<String> authProcSet = new HashSet<>();
+        for (SysProcess v : list) {
+            if (StatusEnum.ENABLED.equals(v.getStatus())) {
+                if (AuthTypeEnum.ANON.equals(v.getAuth())) {
+                    anonProcSet.add(v.getProcCode());
+                } else if (AuthTypeEnum.AUTH.equals(v.getAuth())) {
+                    authProcSet.add(v.getProcCode());
+                }
+            }
+        }
         if (anonProcSet.contains(procCode)) {
             return true;
         }
-        // 登录后可访问的接口
-        Set<String> authProcSet = list.stream()
-                .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysProcess::getProcCode).collect(Collectors.toSet());
+        if (!StpUtil.isLogin()) {
+            throw new UnauthorizedException();
+        }
         if (authProcSet.contains(procCode)) {
             return true;
         }

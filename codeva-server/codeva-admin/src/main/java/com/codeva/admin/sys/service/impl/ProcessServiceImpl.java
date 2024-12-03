@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StopWatch;
 
 import javax.sql.DataSource;
 import javax.tools.JavaFileObject;
@@ -250,17 +251,24 @@ public class ProcessServiceImpl implements ProcessService {
     @SuppressWarnings("unchecked")
     @Override
     public Object run(String code, boolean checkPermission, Map<String, Object> params) {
+        StopWatch sw = new StopWatch();
+        sw.start("接收到请求");
         if (StringUtils.isEmpty(code)) {
             throw new BusinessException("流程编码不可为空");
         }
-        if (checkPermission && !authService.checkProcessPermission(code, this.listAll())) {
+        sw.stop();
+        sw.start("查询权限缓存");
+        List<SysProcess> list = this.listAll();
+        sw.stop();
+        sw.start("校验权限");
+        if (checkPermission && !authService.checkProcessPermission(code, list)) {
             throw new ForbiddenException();
         }
         if (params == null) {
             params = new HashMap<>(8);
         }
-        // code在bpm文件中定义
-        BpmnStringProcessEngineImpl processEngine = BpmnProcessEngineFactory.getProcessEngine();
+        sw.stop();
+        sw.start("查询process");
         SysProcess process = this.getByProcCode(code);
         if (process == null) {
             throw new BusinessException("未找到流程：" + code);
@@ -271,15 +279,23 @@ public class ProcessServiceImpl implements ProcessService {
                 flowVars.put(task.getTaskCode(), task.getExecuteCmd());
             }
         }
+        sw.stop();
+        sw.start("开始执行");
+        // code在bpm文件中定义
+        BpmnStringProcessEngineImpl processEngine = BpmnProcessEngineFactory.getProcessEngine();
         processEngine.setFlowString(FlowUtils.getFlowStr(process.getBpmn()));
         Map<String, Object> param = new HashMap<>(8);
         param.put("flowVars", flowVars);
         param.put("vars", params);
         param.put("varUtil", new VarUtils(params));
         Map<String, Object> flowResult = (Map<String, Object>) processEngine.execute(code, param).get("result");
+        sw.stop();
+        sw.start("返回结果");
         if (flowResult == null || !flowResult.containsKey("flowRes")) {
             return null;
         }
+        sw.stop();
+        log.info(sw.prettyPrint());
         return flowResult.get("flowRes");
     }
 
