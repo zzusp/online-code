@@ -1,6 +1,10 @@
 server:
   port: 7001
 
+codeva:
+  cron:
+    enabled: true
+
 spring:
   profiles:
     active: db,token

@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties",
+      "name": "codeva",
+      "type": "com.codeva.admin.config.properties.CodevaProperties"
+    },
+    {
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties",
+      "name": "codeva.cron",
+      "type": "com.codeva.admin.config.properties.CodevaProperties"
+    }
+  ],
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "codeva.cron.enabled",
+      "description": "Set whether enable cron task.",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "codeva.cron.enabled",
+      "description": "Set whether enable cron task.",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.codeva.admin.config.properties.CodevaProperties"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import com.codeva.admin.sys.service.ProcessService;
 import com.codeva.admin.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * @date Created in 17:51 2024/6/5
  * @modified By
  */
+@ConditionalOnProperty("codeva.cron.enabled")
 @Configuration
 public class CronConfig implements SchedulingConfigurer {
 
