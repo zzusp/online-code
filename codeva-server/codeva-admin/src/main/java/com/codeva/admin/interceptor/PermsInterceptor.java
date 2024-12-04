@@ -15,6 +15,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,20 +34,22 @@ public class PermsInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         String url = request.getServletPath();
-        List<SysMenu> list = menuService.listAll();
+        List<SysMenu> list = menuService.listAllWithoutSchema();
         list = list.stream().filter(v -> StringUtils.isNotBlank(v.getUrl())).collect(Collectors.toList());
         // 可匿名访问的接口
-        Set<String> anonUrlSet = list.stream()
-                .filter(v -> AuthTypeEnum.ANON.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysMenu::getUrl).collect(Collectors.toSet());
-        if (anonUrlSet.contains(url)) {
-            return true;
-        }
+        Set<String> anonUrlSet = new HashSet<>();
         // 登录后可访问的接口
-        Set<String> authUrlSet = list.stream()
-                .filter(v -> AuthTypeEnum.AUTH.equals(v.getAuth()) && StatusEnum.ENABLED.equals(v.getStatus()))
-                .map(SysMenu::getUrl).collect(Collectors.toSet());
-        if (authUrlSet.contains(url)) {
+        Set<String> authUrlSet = new HashSet<>();
+        for (SysMenu v : list) {
+            if (StatusEnum.ENABLED.equals(v.getStatus())) {
+                if (AuthTypeEnum.ANON.equals(v.getAuth())) {
+                    anonUrlSet.add(v.getUrl());
+                } else if (AuthTypeEnum.AUTH.equals(v.getAuth())) {
+                    authUrlSet.add(v.getUrl());
+                }
+            }
+        }
+        if (anonUrlSet.contains(url)) {
             return true;
         }
         // API接口自己做权限校验
@@ -54,6 +57,9 @@ public class PermsInterceptor implements HandlerInterceptor {
             return true;
         }
         if (StpUtil.isLogin()) {
+            if (authUrlSet.contains(url)) {
+                return true;
+            }
             // 用户接口权限
             // 查询角色权限
             List<Map<String, Object>> roles = (List<Map<String, Object>>) StpUtil.getSession().get("roles");

@@ -29,6 +29,13 @@ public interface ProcessService {
     List<SysProcess> listAll();
 
     /**
+     * 查询所有流程信息（不包含bpmn）
+     *
+     * @return 所有流程信息
+     */
+    List<SysProcess> getAllProcessWithoutBpmn();
+
+    /**
      * 根据id查询流程信息
      */
     SysProcess getById(long id);

@@ -14,6 +14,29 @@ import java.util.List;
  */
 public interface ProcessMapper {
 
+    @Select("<script>SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +
+            " update_time, update_by, remark FROM sys_process WHERE del_flag='0' " +
+            "<if test=\"menuCode != null and menuCode != ''\"> AND menu_code = #{menuCode} </if>" +
+            "<if test=\"procCode != null and procCode != ''\"> AND proc_code like concat(\"%\",#{procCode},\"%\") </if>" +
+            "<if test=\"procName != null and procName != ''\"> AND proc_name like concat(\"%\",#{procName},\"%\") </if>" +
+            "</script>")
+    @Results(value = {
+            @Result(column = "id", property = "id"),
+            @Result(column = "menu_code", property = "menuCode"),
+            @Result(column = "proc_code", property = "procCode"),
+            @Result(column = "proc_name", property = "procName"),
+            @Result(column = "bpmn", property = "bpmn"),
+            @Result(column = "auth", property = "auth"),
+            @Result(column = "status", property = "status"),
+            @Result(column = "create_time", property = "createTime", javaType = LocalDateTime.class),
+            @Result(column = "create_by", property = "createBy"),
+            @Result(column = "update_time", property = "updateTime", javaType = LocalDateTime.class),
+            @Result(column = "update_by", property = "updateBy"),
+            @Result(column = "remark", property = "remark")
+    })
+    List<SysProcess> getAllProcess(@Param("menuCode") String menuCode, @Param("procCode") String procCode,
+                                   @Param("procName") String procName);
+
     @Select("<script>SELECT id, menu_code, proc_code, proc_name, auth, status, create_time, create_by," +
             " update_time, update_by, remark FROM sys_process WHERE del_flag='0' " +
             "<if test=\"menuCode != null and menuCode != ''\"> AND menu_code = #{menuCode} </if>" +
@@ -25,7 +48,6 @@ public interface ProcessMapper {
             @Result(column = "menu_code", property = "menuCode"),
             @Result(column = "proc_code", property = "procCode"),
             @Result(column = "proc_name", property = "procName"),
-//            @Result(column = "bpmn", property = "bpmn"),
             @Result(column = "auth", property = "auth"),
             @Result(column = "status", property = "status"),
             @Result(column = "create_time", property = "createTime", javaType = LocalDateTime.class),
@@ -34,7 +56,7 @@ public interface ProcessMapper {
             @Result(column = "update_by", property = "updateBy"),
             @Result(column = "remark", property = "remark")
     })
-    List<SysProcess> getAllProcess(@Param("menuCode") String menuCode, @Param("procCode") String procCode,
+    List<SysProcess> getAllProcessWithoutBpmn(@Param("menuCode") String menuCode, @Param("procCode") String procCode,
                                    @Param("procName") String procName);
 
     @Select("SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by, update_time," +

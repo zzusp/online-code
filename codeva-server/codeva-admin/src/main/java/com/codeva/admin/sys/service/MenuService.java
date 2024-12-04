@@ -19,4 +19,11 @@ public interface MenuService {
      */
     List<SysMenu> listAll();
 
+    /**
+     * 查询所有菜单信息（不包含schema）
+     *
+     * @return 所有菜单信息
+     */
+    List<SysMenu> listAllWithoutSchema();
+
 }

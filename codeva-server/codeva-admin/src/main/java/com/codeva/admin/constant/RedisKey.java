@@ -23,7 +23,11 @@ public class RedisKey {
 
     public static final String ALL_PROC_CACHE = RedisKey.BUSINESS_CACHE + "all_process";
 
+    public static final String ALL_PROC_WITHOUT_BPMN_CACHE = RedisKey.BUSINESS_CACHE + "all_process_without_bpmn";
+
     public static final String ALL_MENU_CACHE = RedisKey.BUSINESS_CACHE + "all_menu";
+
+    public static final String ALL_MENU_WITHOUT_SCHEMA_CACHE = RedisKey.BUSINESS_CACHE + "all_menu_without_schema";
 
     public static String getProcCacheKey(String procCode) {
         return PROC_CACHE_KEY + procCode;

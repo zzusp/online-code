@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean checkMenuPermission(String menuCode) {
-        List<SysMenu> list = menuService.listAll();
+        List<SysMenu> list = menuService.listAllWithoutSchema();
         // 可匿名访问的菜单
         Set<String> anonUrlSet = new HashSet<>();
         // 登录后可访问的菜单

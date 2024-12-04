@@ -115,6 +115,16 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
+    public List<SysProcess> getAllProcessWithoutBpmn() {
+        return redisCacheService.cacheList(RedisKey.ALL_PROC_WITHOUT_BPMN_CACHE, (data) -> {
+            // 缓存未找到，查询数据库
+            try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+                return sqlSession.getMapper(ProcessMapper.class).getAllProcessWithoutBpmn(null, null, null);
+            }
+        }, SysProcess.class, 10, 24 * 60 * 60, TimeUnit.SECONDS);
+    }
+
+    @Override
     public SysProcess getById(long id) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             return sqlSession.getMapper(ProcessMapper.class).getById(id);
@@ -172,6 +182,7 @@ public class ProcessServiceImpl implements ProcessService {
                 // 删除缓存
                 redisTemplate.delete(RedisKey.getProcCacheKey(procCode));
                 redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
+                redisTemplate.delete(RedisKey.ALL_PROC_WITHOUT_BPMN_CACHE);
             } catch (Exception e) {
                 log.error("保存流程失败，错误信息：{}", e.getMessage(), e);
                 throw new BusinessException("保存流程失败，错误信息：" + e.getMessage());
@@ -215,6 +226,7 @@ public class ProcessServiceImpl implements ProcessService {
             sqlSession.commit();
             // 删除缓存
             redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
+            redisTemplate.delete(RedisKey.ALL_PROC_WITHOUT_BPMN_CACHE);
         }
     }
 
@@ -236,6 +248,7 @@ public class ProcessServiceImpl implements ProcessService {
                     // 删除缓存
                     redisTemplate.delete(RedisKey.getProcCacheKey(procCode));
                     redisTemplate.delete(RedisKey.ALL_PROC_CACHE);
+                    redisTemplate.delete(RedisKey.ALL_PROC_WITHOUT_BPMN_CACHE);
                 } catch (Exception e) {
                     log.error("删除流程失败，错误信息：{}", e.getMessage(), e);
                 }
@@ -258,7 +271,7 @@ public class ProcessServiceImpl implements ProcessService {
         }
         sw.stop();
         sw.start("查询权限缓存");
-        List<SysProcess> list = this.listAll();
+        List<SysProcess> list = this.getAllProcessWithoutBpmn();
         sw.stop();
         sw.start("校验权限");
         if (checkPermission && !authService.checkProcessPermission(code, list)) {

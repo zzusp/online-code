@@ -48,4 +48,14 @@ public class MenuServiceImpl implements MenuService {
             }
         }, SysMenu.class, 10, 24 * 60 * 60, TimeUnit.SECONDS);
     }
+
+    @Override
+    public List<SysMenu> listAllWithoutSchema() {
+        return redisCacheService.cacheList(RedisKey.ALL_MENU_WITHOUT_SCHEMA_CACHE, (data) -> {
+            // 缓存未找到，查询数据库
+            try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+                return sqlSession.getMapper(MenuMapper.class).getAllMenuWithoutSchema();
+            }
+        }, SysMenu.class, 10, 24 * 60 * 60, TimeUnit.SECONDS);
+    }
 }
