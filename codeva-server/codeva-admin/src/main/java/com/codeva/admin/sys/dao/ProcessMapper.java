@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface ProcessMapper {
 
-    @Select("<script>SELECT id, menu_code, proc_code, proc_name, bpmn, auth, status, create_time, create_by," +
+    @Select("<script>SELECT id, menu_code, proc_code, proc_name, auth, status, create_time, create_by," +
             " update_time, update_by, remark FROM sys_process WHERE del_flag='0' " +
             "<if test=\"menuCode != null and menuCode != ''\"> AND menu_code = #{menuCode} </if>" +
             "<if test=\"procCode != null and procCode != ''\"> AND proc_code like concat(\"%\",#{procCode},\"%\") </if>" +
