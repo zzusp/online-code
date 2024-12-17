@@ -37,10 +37,29 @@ const Layout = () => {
     }
     // 取出menus中所有mode为0的菜单code
     setSchemaMenuCode(user.menus.filter((m: any) => m.mode === '0').map((m: any) => m.code));
-    setMenu(toNav(user.menus));
+    setMenu(toNav(toMenuTree(user.menus)));
     if (!schemaMenuCode.includes(currentPage)) {
        return (<Outlet></Outlet>);
     }
+  }
+
+  function toMenuTree(menus: any[], parentCode?: string) {
+    if (!menus || menus.length === 0) {
+      return [];
+    }
+    let arr: React.JSX.Element[] = [];
+    menus.forEach(m => {
+      if (!parentCode && !m.parentCode) {
+        m.children = toMenuTree(menus, m.code);
+        arr.push(m);
+      } else {
+        if (m.parentCode === parentCode) {
+          m.children = toMenuTree(menus, m.code);
+          arr.push(m);
+        }
+      }
+    });
+    return arr;
   }
 
   function toNav(menus: any[]) {
@@ -49,12 +68,17 @@ const Layout = () => {
     }
     let arr: React.JSX.Element[] = [];
     menus.forEach(m => {
+      // let icon = <Icon type={m.icon} style={{marginRight: '8px'}} size={'small'}/>;
+      let icon = <BoxIcon name={m.icon} className="menu-icon" size={'20'}/>;
       // 菜单组
       if (m.type === '0') {
-        arr.push(<Nav.SubNav label={m.name}>{toNav(m.children)}</Nav.SubNav>);
+        let children = m.children;
+        if (children.length > 0) {
+          arr.push(<Nav.SubNav label={m.name} icon={icon}>{toNav(children)}</Nav.SubNav>);
+        } else {
+          arr.push(<Nav.Group label={m.name} children={[]}></Nav.Group>);
+        }
       } else if (m.type === '1') { // 菜单
-        // let icon = <Icon type={m.icon} style={{marginRight: '8px'}} size={'small'}/>;
-        let icon = <BoxIcon name={m.icon} className="menu-icon" size={'20'}/>;
         let menuContent = null
         // let icon = m.icon;
         if (m.mode === '0') { // schema
@@ -159,12 +183,36 @@ const Layout = () => {
                   transform 0.3s ease;
               }
 
+              /** 菜单组Label */
+              .next-nav-group-label {
+                margin: 6px 8px 3px 8px;
+                padding: 0 20px;
+                > .next-menu-item-inner {
+                  height: 45px;
+                  font-size: 14px;
+                  display: flex;
+                  align-items: center;
+                }
+              }
+
               /** 菜单内元素 */
               .next-menu-item-inner {
                 height: 45px;
                 font-size: 14px;
                 display: flex;
                 align-items: center;
+              }
+
+              /** 菜单组展开 */
+              .next-nav-item.next-menu-item.next-opened {
+                color: #333;
+              }
+
+              /** 子菜单被选中的菜单组 */
+              .next-nav-item.next-menu-item.next-child-selected {
+                background: rgb(236, 242, 255) !important;
+                color: #4494f9;
+                border-radius: .375rem !important;
               }
 
               /** 悬浮在菜单上 */
