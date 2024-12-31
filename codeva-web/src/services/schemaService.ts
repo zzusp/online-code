@@ -29,11 +29,10 @@ export const getProjectSchemaFromDb = async (scenarioName: string) => {
     .then((res: any) => {
       // 去除转义
       const schema_json = res.data.schemaJson;
-      schemaJson = JSON.parse(schema_json);
-      console.log(schemaJson);
-        if ('login' !== scenarioName) {
-          window.localStorage.setItem(getLSName(scenarioName), schema_json);
-        }
+      schemaJson = !schema_json ? generateProjectSchema(DefaultPageSchema, DefaultI18nSchema) : JSON.parse(schema_json);
+      if ('login' !== scenarioName) {
+        window.localStorage.setItem(getLSName(scenarioName), schema_json);
+      }
     })
     .catch((err: any) => {
     });

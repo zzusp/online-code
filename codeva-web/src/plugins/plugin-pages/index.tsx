@@ -11,7 +11,8 @@ const PagesPlugin = (ctx: IPublicModelPluginContext) => {
   return {
     async init() {
       const { skeleton, project, config } = ctx;
-      const defaultPage = 'login';
+      const urlParams = new URLSearchParams(window.location.search);
+      const defaultPage = urlParams.get('page') || 'login';
       config.set('scenarioName', defaultPage);
       config.set('scenarioDisplayName', defaultPage);
       config.set('scenarioInfo', {});
@@ -30,7 +31,7 @@ const PagesPlugin = (ctx: IPublicModelPluginContext) => {
         let arr: React.JSX.Element[] = [];
         menus.forEach(m => {
           // 菜单组
-          if (m.type === '0') {
+          if (m.type === '0' && m.children) {
             arr.push(<Nav.SubNav label={m.name}>{toNav(m.children)}</Nav.SubNav>);
           } else { // 菜单
             if (m.mode === '0') { // schema
@@ -41,14 +42,7 @@ const PagesPlugin = (ctx: IPublicModelPluginContext) => {
         return arr;
       }
 
-      const onSelect = async (keys: string[]) => {
-        const key = keys[0];
-        console.log('selected', key);
-        // 保存在 config 中用于引擎范围其他插件使用
-        config.set('scenarioName', key);
-        config.set('scenarioDisplayName', key);
-        config.set('scenarioInfo', {});
-
+      const render = async (key: string) => {
         let scenarioSchema = await getProjectSchemaFromDb(key);
         if (!scenarioSchema) {
           scenarioSchema = await getProjectSchema();
@@ -60,6 +54,24 @@ const PagesPlugin = (ctx: IPublicModelPluginContext) => {
         // 加载schema
         project.importSchema(scenarioSchema as any);
         project.simulatorHost?.rerender();
+      };
+
+      const onSelect = async (keys: string[]) => {
+        const key = keys[0];
+        console.log('selected', key);
+        // 保存在 config 中用于引擎范围其他插件使用
+        config.set('scenarioName', key);
+        config.set('scenarioDisplayName', key);
+        config.set('scenarioInfo', {});
+
+        // 创建一个URL对象
+        let url = new URL(window.location.href);
+        // 设置查询参数
+        url.searchParams.set('page', key);
+        // 使用新的URL更新地址栏
+        window.history.pushState({ path: url.href }, '', url.href);
+
+        await render(key);
       };
       // 注册组件面板
       const pagesPane = skeleton.add({
